@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zxx">
+<html lang="zh-CN">
 
 <head>
     <!--====== Required meta tags ======-->
@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!--====== Title ======-->
-    <title> Serverless Regsitry: Serverless package management platform</title>
+    <title>Serverless Regsitry: Serverless 包管理平台</title>
     <!--====== Bootstrap css ======-->
     <link rel="stylesheet" href="static/css/bootstrap.min.css">
     <!--=== Owl-Carousel ===-->
@@ -44,11 +44,19 @@
             white-space: nowrap;
         }
     </style>
+    <script src="https://res.zvo.cn/translate/translate.js"></script>
+    <style>
+        .translateSelectLanguage {
+            /*width: 200px;*/
+        }
+    </style>
 </head>
 
 <body>
+
+
 <!--====== Preloader Start ======-->
-<div id="preloader">
+<div id="preloader" style="margin-top: 40px;">
     <div class="loader-cubes">
         <div class="loader-cube1 loader-cube"></div>
         <div class="loader-cube2 loader-cube"></div>
@@ -87,6 +95,12 @@
                         </li>
                         <li>
                             <a class="nav-link" href="faq.html">常见问题</a>
+                        </li>
+                        <li>
+                            <a href="javascript:translate.changeLanguage('chinese_simplified');" class="ignore">中文</a>
+                        </li>
+                        <li>
+                            <a href="javascript:translate.changeLanguage('english');" class="ignore">English</a>
                         </li>
                     </ul>
                     <a href="#0" class="nav-close"><i class="fal fa-times"></i></a>
@@ -613,7 +627,15 @@
 <script src="static/js/wow.min.js"></script>
 <!--====== Main JS ======-->
 <script src="static/js/main.js"></script>
-
+<script>
+    //translate.ignore.tag.push('span'); //翻译时追加上自己想指定忽略的tag标签，凡是在这里面的，都不进行翻译。
+    //translate.ignore.class.push('test');	//翻译时指定忽略的class name，凡是class name 在这里面的，都不进行翻译。如果不设置默认只有 ignore 这一个
+    //translate.setAutoDiscriminateLocalLanguage();	//设置用户第一次用时，自动识别其所在国家的语种进行切换
+    translate.setUseVersion2(); //设置使用v2.x 版本
+    translate.language.setLocal('chinese_simplified');
+    translate.selectLanguageTag.show = false;
+    translate.execute(); //执行翻译初始化操作，显示出select语言选择
+</script>
 </body>
 
 </html>
