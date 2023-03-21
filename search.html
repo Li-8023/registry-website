@@ -276,7 +276,7 @@
     function getPackages() {
         document.getElementById('keyword').innerHTML = `搜索词：${decodeURI(getQueryVariable('keyword'))}`
         const xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-        xmlhttp.open("POST", 'http://registry.devsapp.cn/package/search', false);
+        xmlhttp.open("POST", 'https://registry.devsapp.cn/package/search', false);
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
                 let itemString = ''

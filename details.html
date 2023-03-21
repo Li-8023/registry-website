@@ -351,12 +351,12 @@
 
     function getDetail() {
         const xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-        xmlhttp.open("POST", 'http://registry.devsapp.cn/package/content', false);
+        xmlhttp.open("POST", 'https://registry.devsapp.cn/package/content', false);
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 let tempData = JSON.parse(xmlhttp.responseText).Response
                 document.getElementById('title').innerHTML = `${tempData.name}
-                <h4><i class="fas fa-calendar"></i> ${tempData.create.split("T")[0]} / V${tempData.version} <a href="http://registry.devsapp.cn/simple/${tempData.name}/zipball/${tempData.version}" style="float: right;" class="download"><i class="fas fa-download">
+                <h4><i class="fas fa-calendar"></i> ${tempData.create.split("T")[0]} / V${tempData.version} <a href="https://registry.devsapp.cn/simple/${tempData.name}/zipball/${tempData.version}" style="float: right;" class="download"><i class="fas fa-download">
                     下载 </i> </a></h4>`
                 document.getElementById('packagetype').innerHTML = {
                     "component": "组件详情",
@@ -368,7 +368,7 @@
                 document.getElementById('usename').innerHTML = `<a href="${tempData.userInformation.html_url}" target="_blank">${tempData.userInformation.user}</a>`
                 document.getElementById('rightupdatetime').innerHTML = tempData.create.split("T")[0]
                 document.getElementById('rightlatestversion').innerHTML = tempData.version
-                document.getElementById('rightlatestversion').href = `http://registry.devsapp.cn/simple/${tempData.name}/zipball/${tempData.version}`
+                document.getElementById('rightlatestversion').href = `https://registry.devsapp.cn/simple/${tempData.name}/zipball/${tempData.version}`
                 let tagsString = ''
                 console.log(tempData.tags)
                 for (let i = 0; i < tempData.tags.length; i++) {
@@ -408,13 +408,13 @@
 
     function getHistoryVersions() {
         const xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-        xmlhttp.open("GET", `http://registry.devsapp.cn/simple/${getQueryVariable('name')}/releases`, false);
+        xmlhttp.open("GET", `https://registry.devsapp.cn/simple/${getQueryVariable('name')}/releases`, false);
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 let tempData = JSON.parse(xmlhttp.responseText).Response
                 let tempString = ''
                 for (let i = 0; i < tempData.length; i++) {
-                    tempString = tempString + `<a href="http://registry.devsapp.cn/simple/${getQueryVariable('name')}/zipball/${tempData[i].tag_name}" target="_blank" class="link"> V${tempData[i].tag_name} (${tempData[i].created_at.split("T")[0]}) </a><br>`
+                    tempString = tempString + `<a href="https://registry.devsapp.cn/simple/${getQueryVariable('name')}/zipball/${tempData[i].tag_name}" target="_blank" class="link"> V${tempData[i].tag_name} (${tempData[i].created_at.split("T")[0]}) </a><br>`
                 }
                 document.getElementById('historyversion').innerHTML = tempString
             }

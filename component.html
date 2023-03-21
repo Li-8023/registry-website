@@ -381,11 +381,11 @@
     function getBaseInfor() {
         const attrList = {
             "category": {
-                "url": "http://registry.devsapp.cn/common/category",
+                "url": "https://registry.devsapp.cn/common/category",
                 "id": 'categorylist'
             },
             "provider": {
-                "url": "http://registry.devsapp.cn/common/provider",
+                "url": "https://registry.devsapp.cn/common/provider",
                 "id": 'providerlist'
             }
         }
@@ -400,7 +400,7 @@
         const index = selectData.selectedIndex
         console.log(document.getElementById('sortselect').selectedIndex)
         const xmlhttp = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-        xmlhttp.open("POST", 'http://registry.devsapp.cn/package/search', false);
+        xmlhttp.open("POST", 'https://registry.devsapp.cn/package/search', false);
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
                 let itemString = ''
