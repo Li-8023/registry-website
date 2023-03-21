@@ -70,6 +70,15 @@
             background: #fff;
         }
     </style>
+    <script>
+        function alertfun(){
+            const alerted = localStorage.getItem("alerted") || "none";
+            if (alerted != 'ok') {
+                localStorage.setItem("alerted", 'ok')
+                alert("Reminder: English information of some content is automatically presented through machine translation. The machine translation process may cause some semantic and other content problems. If you find any, please feedback to the community maintainer email liuyu@xmail.tech")
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -116,7 +125,7 @@
                             <a href="javascript:translate.changeLanguage('chinese_simplified');" class="ignore">中文</a>
                         </li>
                         <li>
-                            <a href="javascript:translate.changeLanguage('english');" class="ignore">English</a>
+                            <a href="javascript:translate.changeLanguage('english');" onclick="alertfun()" class="ignore">English</a>
                         </li>
                     </ul>
                     <a href="#0" class="nav-close"><i class="fal fa-times"></i></a>
