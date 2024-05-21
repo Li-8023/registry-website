@@ -20,4 +20,4 @@ jobs:
       - name: Install ossutil
         run: curl https://gosspublic.alicdn.com/ossutil/install.sh | sudo bash
       - name: Upload file to OS
-        run: ossutil --endpoint oss-cn-hongkong.aliyuncs.com --access-key-id ${{secrets.AK}} --access-key-secret ${{secrets.SK}} cp . oss://serverless-devs-registry-website.oss-cn-hongkong.aliyuncs.com
+        run: ossutil --endpoint oss-cn-hongkong.aliyuncs.com --access-key-id ${{secrets.AK}} --access-key-secret ${{secrets.SK}} cp . oss://serverless-devs-registry-website
