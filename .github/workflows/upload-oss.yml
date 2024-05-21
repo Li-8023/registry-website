@@ -1,0 +1,23 @@
+name: Upload to OSS
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+
+jobs:
+  canary:
+    if: github.repository == 'Serverless-Devs/registry-website'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      
+      - name: Install ossutil
+        run: curl https://gosspublic.alicdn.com/ossutil/install.sh | sudo bash
+      - name: Upload file to OS
+        run: ossutil --endpoint oss-cn-hongkong.aliyuncs.com --access-key-id ${{secrets.AK}} --access-key-secret ${{secrets.SK}} cp . oss://serverless-devs-registry-website.oss-cn-hongkong.aliyuncs.com
