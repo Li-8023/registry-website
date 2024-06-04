@@ -1,4 +1,7 @@
-function _Get(url, callback, isAllData) {
+// get方法 默认返回Body
+function _Get(url, callback, type) {
+    type = type || 'body'
+
     var xmlhttp = window.XMLHttpRequest
       ? new XMLHttpRequest()
       : new ActiveXObject("Microsoft.XMLHTTP");
@@ -9,13 +12,24 @@ function _Get(url, callback, isAllData) {
     );
     xmlhttp.onreadystatechange = function () {
       if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-        if (isAllData) {
+        if (type === 'isAllData') {// get方法返回所有接口数据
           var result = JSON.parse(xmlhttp.responseText)
           callback&&callback(result)
           return ;
         }
-        var result = JSON.parse(xmlhttp.responseText).body;
-        callback&&callback(result)
+
+        if (type === 'response') { // get方法返回Response
+          var result = JSON.parse(xmlhttp.responseText).Response;
+          callback&&callback(result)
+          return ;
+        }
+
+        // get方法返回Body
+        if (type === 'body') {
+          var result = JSON.parse(xmlhttp.responseText).body;
+          callback&&callback(result)
+          return ;
+        }
       }
     };
     xmlhttp.setRequestHeader(

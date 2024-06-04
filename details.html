@@ -477,7 +477,7 @@
             let tempData = JSON.parse(xmlhttp.responseText).Response;
             document.getElementById("title").innerHTML = `${tempData.name}
                 <h4><i class="fas fa-calendar"></i> ${
-                  tempData.create.split("T")[0]
+                  tempData&&tempData.create&&tempData.create.split("T")[0]
                 } / V${
               tempData.version
             } <a href="https://registry.devsapp.cn/simple/${
