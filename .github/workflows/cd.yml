@@ -1,0 +1,29 @@
+name: Deploy on FC
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    if: github.repository == 'Serverless-Devs/registry-website'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      
+      - name: Install s
+        run: npm i @serverless-devs/s -g
+      - run: s config add --AccessKeyID ${{secrets.AK}}  --AccessKeySecret ${{secrets.SK}} -a default -f 
+      - run: rm -rf .git
+      - run: rm -rf .github
+      - name: Deploy on FC
+        run: s deploy -y
+      - run: s info
