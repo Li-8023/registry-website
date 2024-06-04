@@ -1,3 +1,4 @@
+// get方法 默认返回Body
 function _Get(url, callback, type) {
     type = type || 'body'
 
