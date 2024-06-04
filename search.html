@@ -410,7 +410,7 @@
             document.body.removeChild(link);      
           }
           return ;
-        }, true)
+        }, 'isAllData')
       }
 
       function getQueryVariable(variable) {
@@ -492,8 +492,8 @@
 
         document.getElementById("keyword").innerHTML = `搜索词：${searchValue}`;
         // 并行调用两个接口
-        getPackagesV2();
         getPackagesV3();
+        getPackagesV2();
 
         if(dataList && dataList.length > 0){
           renderTpl('searchTpl', { data: dataList }, '#itemlist')
