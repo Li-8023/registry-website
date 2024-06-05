@@ -343,13 +343,14 @@
     <script src="utils/_Get.js"></script>
     <script src="utils/_Post.js"></script>
     <script src="utils/renderTpl.js"></script>
+    <script src="services/downloadV3Plugin.js"></script>
     <!-- 注入搜索模板 -->
 <script type="text/template" id="searchTpl">
   {{each data}}
   <div class="col-xl-4 wow fadeInUp" data-wow-delay="{{$value.delayTime}}s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
     <div class="themes-box">
         <div class="main-content">
-            <h5><a href="details.html?name={{$value.name}}" class="text-flow-ellipsis-single">{{$imports.splitMaxLenth($value.name)}}</a> <i class="fas fa-fire" style="float: right; color: orange;"> {{$value.download}} </i></h5>
+            <h5><a href="details.html?name={{$value.name}}&package_type={{$value.package_type}}" class="text-flow-ellipsis-single">{{$imports.splitMaxLenth($value.name)}}</a> <i class="fas fa-fire" style="float: right; color: orange;"> {{$value.download}} </i></h5>
             <div class="last-part">
                 <div class="right" style="width: 100%">
                     <p class="text" style="margin-bottom: 10px; width: 100%">
@@ -371,7 +372,7 @@
                 <div class="past-part" style="margin-top: 10px">
                 <center>
                     <div class="buton">
-                        <a href="details.html?name={{$value.name}}" class="preButton"> <i class="fas fa-book"></i> 查看详情 </a>
+                        <a href="details.html?name={{$value.name}}&package_type={{$value.package_type}}" class="preButton"> <i class="fas fa-book"></i> 查看详情 </a>
                         {{if $value.zipball_url }}
                         <a href="{{$value.zipball_url}}" target="_blank" class="download"> <i class="fas fa-download"></i> 下载插件 </a>
                         {{else}} 
@@ -395,23 +396,7 @@
       // 列表存储数据
       var dataList = [];
       function downloadPlugin(name) {
-        // 获取 Package 的最新 GET
-        // https://server-serverlgistry-v-awljqvnszb.cn-hangzhou.fcapp.run/v3/packages/{package-name}/release/latest
-        var base_url = BASE_V3_URL
-        var url = base_url + '/packages/'+name+'/release/latest'
-        _Get(url, function (res) {
-          var result = res.body||res.Response;
-          if (result && result.zipball_url) {
-            const link = document.createElement('a');
-            link.setAttribute('href', result.zipball_url);
-            link.setAttribute('target', "_blank");
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);      
-          }
-          return ;
-
-        }, 'isAllData')
+        downloadV3Plugin(name)
       }
 
       function getQueryVariable(variable) {
@@ -448,6 +433,7 @@
               item.version = result[keys[i]].version.tag_name;
               item.description = result[keys[i]].description;
               item.zipball_url = result[keys[i]].version.zipball_url;
+              item.package_type = 'v2'; // v2 v3标识
               dataList.push(item);
             }
 
@@ -481,6 +467,7 @@
               item.description = result[keys[i]].description;
               //   item.zipball_url = result[keys[i]].version.zipball_url;
               item.zipball_url = ''
+              item.package_type = 'v3'; // v2 v3标识
               dataList.push(item);
             }
 

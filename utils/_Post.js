@@ -1,3 +1,4 @@
+// post方法 默认返回Response
 function _Post(url, queryString,callback) {
   var xmlhttp = window.XMLHttpRequest
   ? new XMLHttpRequest()
