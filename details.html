@@ -710,7 +710,7 @@
       // /v3/packages/start-flask-v3/release/latest
       function getDetailV3() {
         var base_url = BASE_V3_URL
-        var url = base_url + '/packages/start-flask-v3/release/latest?'+ `package-name=${getQueryVariable("name")}`
+        var url = base_url + '/packages/'+getQueryVariable("name")+'/release/latest?'+ `package-name=${getQueryVariable("name")}`
         _Get(url, function (tempData) {
           if (!tempData) {
             return ;
