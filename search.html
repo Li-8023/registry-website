@@ -344,6 +344,7 @@
     <script src="utils/_Post.js"></script>
     <script src="utils/renderTpl.js"></script>
     <script src="services/downloadV3Plugin.js"></script>
+    <script src="services/getPackagesSearchForV3.js"></script>
     <!-- 注入搜索模板 -->
 <script type="text/template" id="searchTpl">
   {{each data}}
@@ -443,12 +444,9 @@
 
       // V3: 搜索/获取 Package 信息
       function getPackagesV3() {
-        var base_url = BASE_V3_URL
-        var url = base_url + '/packages/releases?'+ `search=${getQueryVariable("keyword")}`
-        _Get(url, function (result) {
+        getPackagesSearchForV3(`search=${getQueryVariable("keyword")}`, function (result) {
           var keys = Object.keys(result);
             var times = [0.3, 0.2, 0.1];
-
             for (var i = 0; i < keys.length; i++) {
               var item = {};
               item.delayTime = times[Math.floor(Math.random() * times.length)];
@@ -470,7 +468,6 @@
               item.package_type = 'v3'; // v2 v3标识
               dataList.push(item);
             }
-
             return ;
         })
       }

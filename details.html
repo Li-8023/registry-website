@@ -781,6 +781,7 @@
 
             // mddata内容
             var converter = new showdown.Converter();
+            // @TODO: 更新下makeHtml 解析插件
             var html = converter.makeHtml(tempData.readme);
             document.getElementById("mddata").innerHTML = html;
 
