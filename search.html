@@ -335,9 +335,70 @@
     <script src="static/js/jquery.magnific-popup.min.js"></script>
     <!--====== Wow ======-->
     <script src="static/js/wow.min.js"></script>
+    <!-- ====== 模版引擎 ====== -->
+    <script src="vendors/art-template/template-web.js"></script>
     <!--====== Main JS ======-->
     <script src="static/js/main.js"></script>
+    <script src="config/URL.js"></script>
+    <script src="utils/_Get.js"></script>
+    <script src="utils/_Post.js"></script>
+    <script src="utils/renderTpl.js"></script>
+    <script src="services/downloadV3Plugin.js"></script>
+    <!-- 注入搜索模板 -->
+<script type="text/template" id="searchTpl">
+  {{each data}}
+  <div class="col-xl-4 wow fadeInUp" data-wow-delay="{{$value.delayTime}}s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
+    <div class="themes-box">
+        <div class="main-content">
+            <h5><a href="details.html?name={{$value.name}}&package_type={{$value.package_type}}" class="text-flow-ellipsis-single">{{$imports.splitMaxLenth($value.name)}}</a> <i class="fas fa-fire" style="float: right; color: orange;"> {{$value.download}} </i></h5>
+            <div class="last-part">
+                <div class="right" style="width: 100%">
+                    <p class="text" style="margin-bottom: 10px; width: 100%">
+                        <i class="fas fa-rocket"></i> {{$value.type}}&nbsp;&nbsp;&nbsp;
+
+                        {{if $value.published_at }}
+                        |&nbsp;&nbsp;&nbsp; <i class="fas fa-calendar"></i> {{$value.published_at}}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                        {{ /if }}
+
+                        {{if $value.version }}
+                        <i class="fas fa-desktop"></i> V{{$value.version}}
+                        {{ /if }}
+                    </p>
+                    <p class="text-flow-ellipsis-multiple" style="height: 70px">
+                      {{$value.description}}
+                    </p>
+                </div>
+            </div>
+                <div class="past-part" style="margin-top: 10px">
+                <center>
+                    <div class="buton">
+                        <a href="details.html?name={{$value.name}}&package_type={{$value.package_type}}" class="preButton"> <i class="fas fa-book"></i> 查看详情 </a>
+                        {{if $value.zipball_url }}
+                        <a href="{{$value.zipball_url}}" target="_blank" class="download"> <i class="fas fa-download"></i> 下载插件 </a>
+                        {{else}} 
+                        <a onclick="downloadPlugin( '{{$value.name}}' )" class="download"> <i class="fas fa-download"></i> 下载插件 </a>
+                        {{ /if }}
+                    </div>
+                    </center>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</script>
     <script>
+     
+      function splitMaxLenth (dataStr) {
+        return dataStr.length > 25 ? dataStr.slice(0, 25) + "...": dataStr;
+      }
+
+      // 列表存储数据
+      var dataList = [];
+      function downloadPlugin(name) {
+        downloadV3Plugin(name)
+      }
+
       function getQueryVariable(variable) {
         var query = window.location.search.substring(1);
         var vars = query.split("&");
@@ -350,99 +411,84 @@
         return false;
       }
 
-      function getPackages() {
-        document.getElementById("keyword").innerHTML = `搜索词：${decodeURI(
-          getQueryVariable("keyword")
-        )}`;
-        const xmlhttp = window.XMLHttpRequest
-          ? new XMLHttpRequest()
-          : new ActiveXObject("Microsoft.XMLHTTP");
-        xmlhttp.open(
-          "POST",
-          "https://registry.devsapp.cn/package/search",
-          false
-        );
-        xmlhttp.onreadystatechange = function () {
-          if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            let itemString = "";
-            const result = JSON.parse(xmlhttp.responseText).Response;
-            const keys = Object.keys(result);
-            const times = [0.3, 0.2, 0.1];
-            for (let i = 0; i < keys.length; i++) {
-              itemString =
-                itemString +
-                `<div class="col-xl-4 wow fadeInUp" data-wow-delay="${
-                  times[Math.floor(Math.random() * times.length)]
-                }s">
-                        <div class="themes-box">
-                            <div class="main-content">
+      // V2: 搜索/获取 Package 信息
+      function getPackagesV2() {
+        var base_url = BASE_V2_URL
+        _Post(base_url + "/package/search", `keyword=${getQueryVariable("keyword")}`, 
+        function (result) {
+            var keys = Object.keys(result);
+            var times = [0.3, 0.2, 0.1];
 
-                                <h5><a href="details.html?name=${
-                                  result[keys[i]].package
-                                }" class="text-flow-ellipsis-single">${
-                  result[keys[i]].package.length > 25
-                    ? result[keys[i]].package.slice(0, 25) + "..."
-                    : result[keys[i]].package
-                }</a> <i class="fas fa-fire" style="float: right; color: orange;"> ${
-                  result[keys[i]].download
-                } </i></h5>
-                                <div class="last-part">
-                                    <div class="right" style="width: 100%">
-                                        <p class="text" style="margin-bottom: 10px; width: 100%">
-                                            <i class="fas fa-rocket"></i> ${
-                                              {
-                                                3: "应用",
-                                                2: "插件",
-                                                1: "组件",
-                                              }[result[keys[i]].type]
-                                            }&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-                                            <i class="fas fa-calendar"></i> ${
-                                              result[
-                                                keys[i]
-                                              ].version.published_at.split(
-                                                "T"
-                                              )[0]
-                                            }&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-                                            <i class="fas fa-desktop"></i> V${
-                                              result[keys[i]].version.tag_name
-                                            }
-                                        </p>
-                                        <p class="text-flow-ellipsis-multiple" style="height: 70px">
-                                            ${result[keys[i]].description}
-                                        </p>
-                                    </div>
-                                </div>
-                                    <div class="past-part" style="margin-top: 10px">
-                                    <center>
-                                        <div class="buton">
-                                            <a href="details.html?name=${
-                                              result[keys[i]].package
-                                            }" class="preButton"> <i class="fas fa-book"></i> 查看详情 </a>
-                                            <a href="${
-                                              result[keys[i]].version
-                                                .zipball_url
-                                            }" target="_blank" class="download"> <i class="fas fa-download"></i> 下载插件 </a>
-                                        </div>
-                                        </center>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
+            for (var i = 0; i < keys.length; i++) {
+              var item = {};
+              item.delayTime = times[Math.floor(Math.random() * times.length)];
+              item.name = result[keys[i]].package;
+              item.type = {
+                            3: "应用",
+                            2: "插件",
+                            1: "组件",
+                          }[result[keys[i]].type];
+              item.download = result[keys[i]].download;
+              item.published_at = result[keys[i]].version.published_at.split("T")[0]
+              item.version = result[keys[i]].version.tag_name;
+              item.description = result[keys[i]].description;
+              item.zipball_url = result[keys[i]].version.zipball_url;
+              item.package_type = 'v2'; // v2 v3标识
+              dataList.push(item);
             }
-            document.getElementById("itemlist").innerHTML = itemString;
-          }
-        };
-        xmlhttp.setRequestHeader(
-          "Content-type",
-          "application/x-www-form-urlencoded"
-        );
-        let data = `keyword=${getQueryVariable("keyword")}`;
-        xmlhttp.send(data);
+
+            return ;
+        })
       }
 
-      getPackages();
+      // V3: 搜索/获取 Package 信息
+      function getPackagesV3() {
+        var base_url = BASE_V3_URL
+        var url = base_url + '/packages/releases?'+ `search=${getQueryVariable("keyword")}`
+        _Get(url, function (result) {
+          var keys = Object.keys(result);
+            var times = [0.3, 0.2, 0.1];
+
+            for (var i = 0; i < keys.length; i++) {
+              var item = {};
+              item.delayTime = times[Math.floor(Math.random() * times.length)];
+              item.name = result[keys[i]].name;
+              item.type = {
+                            'Project': "应用",
+                            'Application': "应用",
+                            'Plugin': "插件",
+                            'Component': "组件",
+                          }[result[keys[i]].type];
+              item.download = result[keys[i]].download;
+              //   item.published_at = result[keys[i]].version.published_at.split("T")[0]
+              item.published_at = ''
+              //   item.version = result[keys[i]].version.tag_name;
+              item.version = '';
+              item.description = result[keys[i]].description;
+              //   item.zipball_url = result[keys[i]].version.zipball_url;
+              item.zipball_url = ''
+              item.package_type = 'v3'; // v2 v3标识
+              dataList.push(item);
+            }
+
+            return ;
+        })
+      }
+     
+      function main() {
+        var searchValue = decodeURI(getQueryVariable("keyword"))
+
+        document.getElementById("keyword").innerHTML = `搜索词：${searchValue}`;
+        // 并行调用两个接口
+        getPackagesV3();
+        getPackagesV2();
+
+        if(dataList && dataList.length > 0){
+          renderTpl('searchTpl', { data: dataList }, '#itemlist')
+        }
+      }
+
+      main();
     </script>
     <script>
       //translate.ignore.tag.push('span'); //翻译时追加上自己想指定忽略的tag标签，凡是在这里面的，都不进行翻译。
