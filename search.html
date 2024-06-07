@@ -349,7 +349,10 @@
 <script type="text/template" id="searchTpl">
   {{each data}}
   <div class="col-xl-4 wow fadeInUp" data-wow-delay="{{$value.delayTime}}s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
-    <div class="themes-box">
+    <div class="themes-box" style="overflow: hidden;">
+      {{if $value.package_type === 'v2' }}
+      <div class="ribbon" data-spm-anchor-id="5176.28448578.0.i154.758e60cczu7hm5">仅维护</div>
+      {{ /if }}
         <div class="main-content">
             <h5><a href="details.html?name={{$value.name}}&package_type={{$value.package_type}}" class="text-flow-ellipsis-single">{{$imports.splitMaxLenth($value.name)}}</a> <i class="fas fa-fire" style="float: right; color: orange;"> {{$value.download}} </i></h5>
             <div class="last-part">
