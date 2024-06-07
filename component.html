@@ -493,11 +493,6 @@
         downloadV3Plugin(name)
       }
 
-      // 列表存储数据
-      var dataList;
-      var v3Total = 0;
-      var v2Total = 0;
-
       function onClick(value, key, package_type) {
         var obj = {
           package_type : package_type,
@@ -539,23 +534,30 @@
        
         document.getElementById(idName).innerHTML = attrString;
       }
-
-
-       // V3: 搜索/获取 Package 信息
-       function getPackagesV3(sort) {
-        var data = `type=Component&sort=${sort}`;
-        if ((getQueryVariable("category") || "-1") !== "-1") {
-          data = insertParam("category", getQueryVariable("category"), data);
-        }
-        if (document.getElementById("searchdata").value) {
-          data = insertParam("search",document.getElementById("searchdata").value,data);
-        }
-        if ((getQueryVariable("provider") || "-1") !== "-1") {
-          data = insertParam("provider", getQueryVariable("provider"), data);
-        }
-
-
-        getPackagesSearchForV3(data, function (result) {
+      
+      function getPackages() {
+        var selectData = document.getElementById("sortselect");
+        var index = selectData.selectedIndex;
+        var sort = selectData.options[index].value;
+        console.log(document.getElementById("sortselect").selectedIndex);
+        // 列表存储数据
+        var dataList = [];
+        var v3Total = 0;
+        var v2Total = 0;
+        // 左侧内容主体区域
+        // V3: 搜索/获取 Package 信息
+        ;(function getPackagesV3() {
+            var data = `type=Component&sort=${sort}`;
+            if ((getQueryVariable("category") || "-1") !== "-1") {
+              data = insertParam("category", getQueryVariable("category"), data);
+            }
+            if (document.getElementById("searchdata").value) {
+              data = insertParam("search",document.getElementById("searchdata").value,data);
+            }
+            if ((getQueryVariable("provider") || "-1") !== "-1") {
+              data = insertParam("provider", getQueryVariable("provider"), data);
+            }
+          getPackagesSearchForV3(data, function (result) {
           var keys = Object.keys(result);
             var times = [0.3, 0.2, 0.1];
             for (var i = 0; i < keys.length; i++) {
@@ -576,11 +578,10 @@
             v3Total = keys.length
             return ;
         })
-      }
-
-
-      function getPackagesV2(sort) {
+          }
+        )();
         // V2: 获取 Package 信息
+        ;(function getPackagesV2() {
         // ===> type=Component&sort=time
         // ===> type=Component&sort=download
         // ===> type=Component&sort=download&keyword=core
@@ -619,19 +620,7 @@
             v2Total = keys.length
           }
         )
-      }
-      function getPackages() {
-        var selectData = document.getElementById("sortselect");
-        var index = selectData.selectedIndex;
-        var sort = selectData.options[index].value;
-        console.log(document.getElementById("sortselect").selectedIndex);
-
-        // 列表存储数据
-        dataList = [];
-      
-        // 左侧内容主体区域
-        getPackagesV3(sort)
-        getPackagesV2(sort)
+        })();
 
         if(dataList && dataList.length > 0){
           if(sort === 'time'){
@@ -646,7 +635,6 @@
 
         renderTpl('totalTpl', { total: v2Total + v3Total }, '#showinfo')
       }
-
 
        // 获取 分类 / 信息
        // 1. 调用V2接口  获取V2分类
