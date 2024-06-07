@@ -343,6 +343,7 @@
     <script src="utils/_Get.js"></script>
     <script src="utils/_Post.js"></script>
     <script src="utils/renderTpl.js"></script>
+    <script src="utils/splitMaxLenth.js"></script>
     <script src="services/downloadV3Plugin.js"></script>
     <script src="services/getPackagesSearchForV3.js"></script>
     <!-- 注入搜索模板 -->
@@ -392,11 +393,6 @@
     {{/each}}
 </script>
     <script>
-     
-      function splitMaxLenth (dataStr) {
-        return dataStr.length > 25 ? dataStr.slice(0, 25) + "...": dataStr;
-      }
-
       // 列表存储数据
       var dataList = [];
       function downloadPlugin(name) {
@@ -485,6 +481,8 @@
 
         if(dataList && dataList.length > 0){
           renderTpl('searchTpl', { data: dataList }, '#itemlist')
+        }else{
+          renderTpl('searchTpl', { data: [] }, '#itemlist')
         }
       }
 
