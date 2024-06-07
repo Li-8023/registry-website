@@ -715,6 +715,14 @@
           if (!tempData) {
             return ;
           }
+         if (tempData.body) {
+          tempData = tempData.body
+          console.log('tempData')
+          console.log(tempData)
+          if (typeof tempData === 'string') {
+            document.getElementById("mddata").innerHTML = tempData;
+            return
+          }
           renderTpl('titleTpl', 
           { 
             name: tempData.name,
@@ -809,8 +817,9 @@
               }, 
               '#quick'
             )
+            }
             return ;
-        })
+        }, 'isAllData')
       }
 
       // V3: 获取Package所有版本接口
