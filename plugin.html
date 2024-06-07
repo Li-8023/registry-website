@@ -386,6 +386,12 @@
     <script src="static/js/wow.min.js"></script>
     <!--====== Main JS ======-->
     <script src="static/js/main.js"></script>
+
+    <script src="config/URL.js"></script>
+    <script src="utils/_Get.js"></script>
+    <script src="utils/_Post.js"></script>
+
+
     <script>
       function getQueryVariable(variable) {
         var query = window.location.search.substring(1);
@@ -478,8 +484,8 @@
         }
         document.getElementById(idName).innerHTML = attrString;
       }
-
-      function getBaseInfor() {
+      // V2: 获取 分类 / 云厂商 信息
+      function getBaseInforV2() {
         const attrList = {
           category: {
             url: "https://registry.devsapp.cn/common/category",
@@ -600,8 +606,13 @@
         xmlhttp.send(data);
       }
 
-      getPackages();
-      getBaseInfor();
+   
+      function main() {
+        getPackages();
+        getBaseInforV2();
+      }
+
+      main();
     </script>
     <script>
       //translate.ignore.tag.push('span'); //翻译时追加上自己想指定忽略的tag标签，凡是在这里面的，都不进行翻译。
