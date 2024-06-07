@@ -429,3 +429,17 @@
 	});
 
 })(jQuery);
+
+
+
+var objectSerialize = function (obj) {
+	var params = { ...obj } // wd=111&cb=222
+
+	var arrs = [] // 数组序列化
+	for (var key in params) {
+	  if (params[key]) {
+		arrs.push(`${key}=${params[key]}`)
+	  }
+	}
+	return `?${arrs.join('&')}`
+}
