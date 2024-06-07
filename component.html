@@ -526,7 +526,7 @@
           // console.log(item.id, item.name, item.package_type);
           attrString = attrString +
             `<li>
-              <a onclick="onClick('${item.id}', '${name}','${item.package_type}')" class="link ${keys[i] == decodeURI(getQueryVariable(name) || "-1")? "active": ""}">
+              <a onclick="onClick('${item.id}', '${name}','${item.package_type}')" class="link ${item.id == decodeURI(getQueryVariable(name) || "-1")? "active": ""}">
               <span>${item.name || "全部"}</span>
              </a>
            </li>`
