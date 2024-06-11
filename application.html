@@ -652,6 +652,20 @@
               notInArray1.forEach(element => {
                 providerList.push(element)
               });
+
+              // 查找ID为10的元素
+              var itemToMove = providerList.find(item => item._id === 10);
+
+              if (itemToMove) {
+                // 移除该元素
+                var indexToRemove = providerList.indexOf(itemToMove);
+                providerList.splice(indexToRemove, 1);
+              
+                // 插入到新位置
+                var newIndex = 1; // 目标索引位置
+                providerList.splice(newIndex, 0, itemToMove);
+              }
+              
             }
 
           });
