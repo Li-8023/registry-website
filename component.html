@@ -417,7 +417,11 @@
                     <div class="right" style="width: 100%">
                         <p class="text" style="width: 100%">
                             {{if $value.published_at }}
-                            <i class="fas fa-calendar"></i> {{$value.published_at}}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                            <i class="fas fa-calendar"></i> {{$value.published_at}}
+                            {{ /if }}
+
+                            {{if $value.published_at&&$value.version }}
+                            &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
                             {{ /if }}
     
                             {{if $value.version }}
@@ -493,25 +497,37 @@
         downloadV3Plugin(name)
       }
 
-      function onClick(value, key, package_type) {
-        var obj = {
-          package_type : package_type,
-        };
+      function onClick(value, key, package_type, name) {
+        var obj = {};
         if (key==='category') {
           obj[key] = value
           if (getQueryVariable("provider")) {
             obj['provider'] = getQueryVariable("provider")
           }
+          if (getQueryVariable("package_type")) {
+            obj['package_type'] = getQueryVariable("package_type")
+          }
+          if (name) {// 添加一个category_name字段
+            obj['category_name'] = name
+          }
         }
+
         if (key==='provider') {
           obj[key] = value
           if (getQueryVariable("category")) {
             obj['category'] = getQueryVariable("category")
           }
+          if (getQueryVariable("category_name")) {// 添加一个category_name字段
+            obj['category_name'] = getQueryVariable("category_name")
+          }
+          if (package_type) {
+            obj['package_type'] = package_type
+          }
         }
+     
         window.location.href = objectSerialize(obj)
       }
-
+      
       function setBaseList(listData, idName, name) {
         var attrString = "";
         var keys = [{
@@ -526,7 +542,7 @@
           // console.log(item.id, item.name, item.package_type);
           attrString = attrString +
             `<li>
-              <a onclick="onClick('${item.id}', '${name}','${item.package_type}')" class="link ${item.id == decodeURI(getQueryVariable(name) || "-1")? "active": ""}">
+              <a onclick="onClick('${item.id}', '${name}','${item.package_type}', '${item.name}')" class="link ${item.id == decodeURI(getQueryVariable(name) || "-1")? "active": ""}">
               <span>${item.name || "全部"}</span>
              </a>
            </li>`
@@ -547,9 +563,10 @@
         // 左侧内容主体区域
         // V3: 搜索/获取 Package 信息
         ;(function getPackagesV3() {
-            var data = `type=Component&sort=${sort}`;
+            var data = `type=${V3_SEARCH_TYPE['Component']}&sort=${sort}`;
             if ((getQueryVariable("category") || "-1") !== "-1") {
-              data = insertParam("category", getQueryVariable("category"), data);
+              // 如果是这个方法categrory传文字
+              data = insertParam("category", getQueryVariable("category_name"), data);
             }
             if (document.getElementById("searchdata").value) {
               data = insertParam("search",document.getElementById("searchdata").value,data);
@@ -565,8 +582,8 @@
               item.delayTime = times[Math.floor(Math.random() * times.length)];
               item.name = result[keys[i]].name;
               item.download = result[keys[i]].download;
-              //   item.published_at = result[keys[i]].version.published_at.split("T")[0]
-              item.published_at = ''
+              item.published_at = result[keys[i]].latest_create.split(" ")[0];
+              item.published_at_source = dateFunction(result[keys[i]].latest_create)
               //   item.version = result[keys[i]].version.tag_name;
               item.version = '';
               item.description = result[keys[i]].description;
@@ -577,8 +594,7 @@
             }
             v3Total = keys.length
             return ;
-        })
-          }
+        })}
         )();
         // V2: 获取 Package 信息
         ;(function getPackagesV2() {
@@ -598,7 +614,10 @@
         if ((getQueryVariable("provider") || "-1") !== "-1") {
           data = insertParam("provider", getQueryVariable("provider"), data);
         }
-
+        // 如果发现是type为v3接口新增类型,则不调用v2
+        if (getQueryVariable("package_type")==='v3') {
+          return ;
+        }
 
         var base_url = BASE_V2_URL
         _Post(base_url + "/package/search", data, 
@@ -611,6 +630,7 @@
               item.name = result[keys[i]].package;
               item.download = result[keys[i]].download;
               item.published_at = result[keys[i]].version.published_at.split("T")[0]
+              item.published_at_source = dateFunction(result[keys[i]].version.published_at)
               item.version = result[keys[i]].version.tag_name;
               item.description = result[keys[i]].description;
               item.zipball_url = result[keys[i]].version.zipball_url;
@@ -624,7 +644,7 @@
 
         if(dataList && dataList.length > 0){
           if(sort === 'time'){
-
+            dataList = dataList.sort((a, b) => compareTimeStrings(b.published_at_source ,a.published_at_source));
           }else if (sort === 'download') { // 根据download字段排序
             dataList = dataList.sort((a, b) => b.download - a.download);
           }
@@ -641,18 +661,6 @@
        // 2. 调用V3接口  获取V3分类
        function getCategory(){
         var categoryList = []; // package_type
-        ;(function getCategoryV2() {
-          _GetJSON("https://registry.devsapp.cn/common/category", function (tempData) {
-            for (var key in tempData) {
-              var obj = {}
-              var value = tempData[key]
-              obj["package_type"] = 'v2'
-              obj["id"] = key
-              obj['name'] = value
-              categoryList.push(obj)
-            }
-          });
-        })()
         ;(function getCategoryV3() {
           var base_url = BASE_V3_URL;
           _GetJSON(base_url + '/common/categories', function (tempData) {
@@ -666,14 +674,13 @@
               )
               .map(obj => {
                  return {
-                   'package_type':'v3',
+                  //  'package_type':'v3',
                    'id': obj.id + '', // id属性转换为字符串
                    'name': obj.name
                  }
                })
 
               // categoryList.push({
-              //   'package_type':'v3',
               //   'id': 2,
               //   'name': 'Web 应用'
               // })
@@ -686,6 +693,20 @@
           
           });
         })();
+        
+        ;(function getCategoryV2() {
+          _GetJSON("https://registry.devsapp.cn/common/category", function (tempData) {
+            for (var key in tempData) {
+              var obj = {}
+              var value = tempData[key]
+              // obj["package_type"] = 'v2'
+              obj["id"] = key
+              obj['name'] = value
+              categoryList.push(obj)
+            }
+          });
+        })()
+       
          // 渲染的方法: 渲染分类数据
          setBaseList(categoryList, "categorylist", 'category');
        }
@@ -707,7 +728,7 @@
             }
           });
         })();
-        ;(function getCategoryV3() {
+        ;(function getProviderV3() {
           var base_url = BASE_V3_URL;
           _GetJSON(base_url + '/common/providers', function (tempData) {
             // 计算获取V3比V2多的云厂商item

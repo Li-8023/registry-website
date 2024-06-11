@@ -480,6 +480,8 @@
         getPackagesV2();
 
         if(dataList && dataList.length > 0){
+          // @todo 增加去重，如果v2 v3存在相同name应用, 只展示v2应用
+          // 去重
           renderTpl('searchTpl', { data: dataList }, '#itemlist')
         }else{
           renderTpl('searchTpl', { data: [] }, '#itemlist')

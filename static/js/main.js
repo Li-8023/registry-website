@@ -443,3 +443,24 @@ var objectSerialize = function (obj) {
 	}
 	return `?${arrs.join('&')}`
 }
+
+// 处理带T的时间格式
+function dateFunction(time) {
+	var zoneDate = new Date(time).toJSON();
+	var date = new Date(+new Date(zoneDate) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/,'');
+	return date;
+}
+
+// 时间字符串比较大小
+function compareTimeStrings(timeStr1, timeStr2) {
+	const timestamp1 = Date.parse(timeStr1);
+	const timestamp2 = Date.parse(timeStr2);
+
+	if (timestamp1 > timestamp2) {
+	  return 1;
+	} else if (timestamp1 < timestamp2) {
+	  return -1;
+	} else {
+	  return 0;
+	}
+  }
