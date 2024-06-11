@@ -6,7 +6,7 @@ function downloadV3Plugin(name) {
      var url = base_url + '/packages/'+name+'/release/latest'
      _Get(url, function (res) {
       if (res.body==="未找到指定资源") {
-        console.log('未找到指定资源')
+        alert('未找到指定资源')
         return;
       }
        var result = res.body||res.Response;

@@ -262,7 +262,7 @@
        
             <div class="right-box" id="provider"></div>
 
-            <div class="product-information wow fadeInUp">
+            <div class="product-information wow fadeInUp" id="latest_container">
               <div class="left-box">
                 <p class="text">更新时间:</p>
                 <p class="text">最新版本:</p>
@@ -275,7 +275,7 @@
               </div>
               <div class="right-box" id="historyversion"></div>
             </div>
-            <div class="product-information wow fadeInUp">
+            <div class="product-information wow fadeInUp" id="tagslist_container">
               <div class="left-box">
                 <p class="text">标签</p>
               </div>
@@ -423,7 +423,18 @@
 <script type="text/template" id="titleTpl" async>
   {{name}}
   <h4>
-    <i class="fas fa-calendar"></i> {{createTime}} / V{{version}}
+    {{if createTime }}
+    <i class="fas fa-calendar"></i> {{createTime}}
+    {{ /if }}
+
+    {{if createTime && version }}
+    / 
+    {{ /if }}
+    
+    {{if version }}
+      V{{version}}
+    {{ /if }}
+
     {{if package_type === 'v2' }}
     <a href="https://registry.devsapp.cn/simple/{{name}}/zipball/{{version}}" style="float: right;" class="download"><i class="fas fa-download">
       下载 </i> 
@@ -720,7 +731,20 @@
           console.log('tempData')
           console.log(tempData)
           if (typeof tempData === 'string') {
+            renderTpl('titleTpl', 
+            { 
+              name: 'aliyun_oss_bucket',
+              createTime: undefined,
+              version:  undefined,
+              package_type: 'v3'
+            }, 
+             '#title'
+          )
             document.getElementById("mddata").innerHTML = tempData;
+            $("#tagslist_container").hide()
+            $('[role="tablist"]').hide()
+            $('.box-one').hide()
+            $('#latest_container').hide()
             return
           }
           renderTpl('titleTpl', 
@@ -772,12 +796,17 @@
             '#rightupdatetime'
           )  
 
-          renderTpl('tagslistTpl', 
+          if(tempData.tags){
+            renderTpl('tagslistTpl', 
             { 
               data: tempData.tags,
             }, 
             '#tagslist'
-          )
+            )
+          }else{
+            $("#tagslist_container").hide()
+          }
+          
 
            renderTpl('providerTpl', // 与tagslistTpl 使用同一个模版
              { 
