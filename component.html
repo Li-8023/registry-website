@@ -539,7 +539,7 @@
         var selectData = document.getElementById("sortselect");
         var index = selectData.selectedIndex;
         var sort = selectData.options[index].value;
-        console.log(document.getElementById("sortselect").selectedIndex);
+        // console.log(document.getElementById("sortselect").selectedIndex);
         // 列表存储数据
         var dataList = [];
         var v3Total = 0;
@@ -656,15 +656,36 @@
         ;(function getCategoryV3() {
           var base_url = BASE_V3_URL;
           _GetJSON(base_url + '/common/categories', function (tempData) {
-            // @TODO: 计算获取V3比V2多的分类item
-            categoryList.push({
-              'package_type':'v3',
-              'id': '2',
-              'name': 'Web 应用'
-            })
+            // 计算获取V3比V2多的分类item
+
+            var body = tempData.body
+            if (body && body.length > 0) {
+              // 找出不在categoryList中的body对象
+              var notInArray1 = body.filter(obj2 =>
+                !categoryList.find(obj1 => obj1.name === obj2.name)
+              )
+              .map(obj => {
+                 return {
+                   'package_type':'v3',
+                   'id': obj.id + '', // id属性转换为字符串
+                   'name': obj.name
+                 }
+               })
+
+              // categoryList.push({
+              //   'package_type':'v3',
+              //   'id': 2,
+              //   'name': 'Web 应用'
+              // })
+
+              // 合并两个数组
+              notInArray1.forEach(element => {
+                categoryList.push(element)
+              });
+            }
+          
           });
         })();
-
          // 渲染的方法: 渲染分类数据
          setBaseList(categoryList, "categorylist", 'category');
        }
@@ -689,14 +710,33 @@
         ;(function getCategoryV3() {
           var base_url = BASE_V3_URL;
           _GetJSON(base_url + '/common/providers', function (tempData) {
-            // @TODO: 计算获取V3比V2多的云厂商item
+            // 计算获取V3比V2多的云厂商item
             // console.log('v3---tempData===')
-            // console.log(tempData)
-            providerList.push({ 'package_type':'v3','_id': 8, 'name': '专有云'  ,'id': '专有云'   })
-            providerList.push({ 'package_type':'v3','_id': 10,'name': '火山引擎', 'id': '火山引擎' })
-            providerList.push({ 'package_type':'v3','_id': 11,'name': '天翼云'  ,'id': '天翼云'   })
-            providerList.push({ 'package_type':'v3','_id': 12,'name': '移动云'  ,'id': '移动云'   })
-            providerList.push({ 'package_type':'v3','_id': 13,'name': '联通云'  ,'id': '联通云'   })
+            var body = tempData.body
+            if (body && body.length > 0) {
+              // providerList.push({ 'package_type':'v3','_id': 8, 'name': '专有云'  ,'id': '专有云'   })
+              // providerList.push({ 'package_type':'v3','_id': 10,'name': '火山引擎', 'id': '火山引擎' })
+              // providerList.push({ 'package_type':'v3','_id': 11,'name': '天翼云'  ,'id': '天翼云'   })
+              // providerList.push({ 'package_type':'v3','_id': 12,'name': '移动云'  ,'id': '移动云'   })
+              // providerList.push({ 'package_type':'v3','_id': 13,'name': '联通云'  ,'id': '联通云'   })
+              // 找出不在providerList中的body对象
+              var notInArray1 = body.filter(obj2 =>
+                !providerList.find(obj1 => obj1.name === obj2.name)
+              ).map(obj => {
+                return {
+                  'package_type':'v3',
+                  'id': obj.name,
+                  '_id': obj.id,
+                  'name': obj.name
+                }
+              });
+
+              // 合并两个数组
+              notInArray1.forEach(element => {
+                providerList.push(element)
+              });
+            }
+
           });
         })();
 
