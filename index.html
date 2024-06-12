@@ -52,6 +52,13 @@
         /*width: 200px;*/
       }
     </style>
+    <style>
+       @media (max-width: 1500px){
+            .title-name{
+                width: 180px; 
+            }
+        }
+    </style>
     <script>
       function alertfun() {
         const alerted = localStorage.getItem("alerted") || "none";
@@ -63,6 +70,8 @@
         }
       }
     </script>
+    <script src="config/URL.js"></script>
+    <script src="utils/_Get.js"></script>
   </head>
 
   <body>
@@ -723,7 +732,7 @@
     <!--====== Back to top start ======-->
 
     <script>
-      function getPackages() {
+      function getV2PackagesRecommend() {
         const xmlhttp = window.XMLHttpRequest
           ? new XMLHttpRequest()
           : new ActiveXObject("Microsoft.XMLHTTP");
@@ -781,8 +790,55 @@
         );
         xmlhttp.send();
       }
+      // V2版本 推荐应用
+      // getV2PackagesRecommend(); 
+    </script>
 
-      getPackages();
+    <script>
+      // 获取 V3版本 推荐应用
+      function getV3PackagesRecommend(params) {
+      var url = BASE_V3_URL + '/console/1/tabs/5?lang=zh'
+      _Get(url, function (result) {
+          if (!result) {
+          return ;
+        }
+        var itemString = "";
+        var keys = Object.keys(result);
+        var times = [0.3, 0.2, 0.1];
+        for (var i = 0; i < keys.length; i++) {
+          var item = result[keys[i]];
+          // console.log(item)
+          var package = item && item.package && item.package.name || '';
+          var created_at = item && item.version && item.version.created_at && item.version.created_at.split(" ")[0] || '';
+          var tag_name = item && item.version && item.version.tag_name || '';
+          itemString = itemString + `<div class="feature-box item">
+                    <a href="details.html?name=${package}&package_type=v3" style="width: 100%; display: inline-block;">
+                        <div class="content">
+                            <h5>
+                                <font size="6" class="text-flow-ellipsis-single title-name" style="display: inline-block;">${package}</font>
+                                <i class="fas fa-fire" style="float: right; color: orange; margin-top: 12px">
+                                    ${item.download} </i>
+                            </h5>
+                            <p class="text">
+                                  <i class="fas fa-calendar"></i> ${created_at}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                                        <i class="fas fa-desktop"></i> V${tag_name}
+
+                            </p>
+                            <p class="text-flow-ellipsis-multiple" style="height: 80px">
+                                 ${item.description}
+                            </p>
+                        </div>
+                    </a>
+                </div>`;
+        }
+
+        document.getElementById("itemlist").innerHTML = itemString;
+      
+      return ;
+    })
+  }
+      // V3版本 推荐应用
+      getV3PackagesRecommend(); 
     </script>
 
     <!--====== Jquery ======-->
