@@ -259,7 +259,7 @@
           </div>
           <div class="col-xl-4 col-lg-6">
             <div class="pi-content" id="pi-content"></div>
-       
+
             <div class="right-box" id="provider"></div>
 
             <div class="product-information wow fadeInUp" id="latest_container">
@@ -275,7 +275,10 @@
               </div>
               <div class="right-box" id="historyversion"></div>
             </div>
-            <div class="product-information wow fadeInUp" id="tagslist_container">
+            <div
+              class="product-information wow fadeInUp"
+              id="tagslist_container"
+            >
               <div class="left-box">
                 <p class="text">标签</p>
               </div>
@@ -408,7 +411,10 @@
     <!--====== Wow ======-->
     <script src="static/js/wow.min.js"></script>
     <!--====== markdown ======-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+    <script src="
+    https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js
+    "></script>
+
     <!-- ====== 模版引擎 ====== -->
     <script src="vendors/art-template/template-web.js"></script>
     <!--====== Main JS ======-->
@@ -419,123 +425,115 @@
     <script src="utils/renderTpl.js"></script>
     <script src="services/downloadV3Plugin.js"></script>
 
-<!-- 注入Banner Start Title模板 -->
-<script type="text/template" id="titleTpl" async>
-  {{name}}
-  <h4>
-    {{if createTime }}
-    <i class="fas fa-calendar"></i> {{createTime}}
-    {{ /if }}
+    <!-- 注入Banner Start Title模板 -->
+    <script type="text/template" id="titleTpl" async>
+      {{name}}
+      <h4>
+        {{if createTime }}
+        <i class="fas fa-calendar"></i> {{createTime}}
+        {{ /if }}
 
-    {{if createTime && version }}
-    / 
-    {{ /if }}
-    
-    {{if version }}
-      V{{version}}
-    {{ /if }}
+        {{if createTime && version }}
+        /
+        {{ /if }}
 
-    {{if package_type === 'v2' }}
-    <a href="https://registry.devsapp.cn/simple/{{name}}/zipball/{{version}}" style="float: right;" class="download"><i class="fas fa-download">
-      下载 </i> 
-    </a>
-    {{else}} 
-    <a onclick="downloadPlugin( '{{name}}' )" style="float: right;" class="download"><i class="fas fa-download">
-      下载 </i> 
-    </a>
-    {{ /if }}
-  </h4>
-</script>
-<!-- 注入Banner Start packagetype模板 -->
-<script type="text/template" id="packageTypeTpl" async>
-  {{packagetype}}
-</script>
+        {{if version }}
+          V{{version}}
+        {{ /if }}
 
-<!-- 注入desciption模板 -->
-<script type="text/template" id="descriptionTpl" async>
-  {{description}}
-</script>
+        {{if package_type === 'v2' }}
+        <a href="https://registry.devsapp.cn/simple/{{name}}/zipball/{{version}}" style="float: right;" class="download"><i class="fas fa-download">
+          下载 </i>
+        </a>
+        {{else}}
+        <a onclick="downloadPlugin( '{{name}}' )" style="float: right;" class="download"><i class="fas fa-download">
+          下载 </i>
+        </a>
+        {{ /if }}
+      </h4>
+    </script>
+    <!-- 注入Banner Start packagetype模板 -->
+    <script type="text/template" id="packageTypeTpl" async>
+      {{packagetype}}
+    </script>
 
-<!-- 注入provider模版 -->
-<script type="text/template" id="providerTpl" async>
-  <div class="product-information wow fadeInUp" style="margin-top: {{package_type==='v3'? '0px': ''}};">
-    <div class="left-box">
-      <p class="text">厂商支持:</p>
-    </div>
-    <div class="right-box">{{data}}</div>
-  </div>
-</script>
+    <!-- 注入desciption模板 -->
+    <script type="text/template" id="descriptionTpl" async>
+      {{description}}
+    </script>
 
-<!-- 注入quick模板 -->
-<script type="text/template" id="quickTpl" async>
-  {{if type == "application" }}
-  <br>可以通过以下命令快速体验该应用：<pre>s init {{name}}</pre>
-  {{/if}}
-</script>
+    <!-- 注入provider模版 -->
+    <script type="text/template" id="providerTpl" async>
+      <div class="product-information wow fadeInUp" style="margin-top: {{package_type==='v3'? '0px': ''}};">
+        <div class="left-box">
+          <p class="text">厂商支持:</p>
+        </div>
+        <div class="right-box">{{data}}</div>
+      </div>
+    </script>
 
-<!-- 注入pi-content模板 -->
-<script type="text/template" id="piContentTpl" async>
+    <!-- 注入quick模板 -->
+    <script type="text/template" id="quickTpl" async>
+      {{if type == "application" }}
+      <br>可以通过以下命令快速体验该应用：<pre>s init {{name}}</pre>
+      {{/if}}
+    </script>
 
-
-  {{if package_type === 'v3' }}
-  
-  {{else}} 
-  <div class="product-information-content wow fadeInUp">
-    <img src="{{avatar_url}}" alt="" width="200px" />
-    <h4 id="usename">
-      <a href="{{html_url}}" target="_blank">{{user}}</a>
-    </h4>     
-  </div>
-  {{ /if }}
+    <!-- 注入pi-content模板 -->
+    <script type="text/template" id="piContentTpl" async>
 
 
-</script>
+      {{if package_type === 'v3' }}
 
+      {{else}}
+      <div class="product-information-content wow fadeInUp">
+        <img src="{{avatar_url}}" alt="" width="200px" />
+        <h4 id="usename">
+          <a href="{{html_url}}" target="_blank">{{user}}</a>
+        </h4>
+      </div>
+      {{ /if }}
+    </script>
 
-<!-- 注入tagslist模板 -->
-<script type="text/template" id="tagslistTpl" async>
-  {{each data}}
-  <span> {{$value}} </span><br>
-  {{/each}}
-</script>
+    <!-- 注入tagslist模板 -->
+    <script type="text/template" id="tagslistTpl" async>
+      {{each data}}
+      <span> {{$value}} </span><br>
+      {{/each}}
+    </script>
 
+    <!-- 注入 serviceListTpl模板 -->
+    <script type="text/template" id="serviceListTpl" async>
+      {{if package_type === 'v3' }}
+      {{each data}}
+       <li> {{$value}} </li>
+      {{/each}}
+      {{else}}
+        {{each data}}
+        <li> {{$value}}: {{service[$value].Authorities.join(", ")}}
+        </li>
+        {{/each}}
+      {{ /if }}
+    </script>
 
-<!-- 注入 serviceListTpl模板 -->
-<script type="text/template" id="serviceListTpl" async>
-  {{if package_type === 'v3' }}
-  {{each data}}
-   <li> {{$value}} </li>
-  {{/each}}
-  {{else}} 
-    {{each data}}
-    <li> {{$value}}: {{service[$value].Authorities.join(", ")}}
-    </li>
-    {{/each}}
-  {{ /if }}
+    <!-- 注入rightupdatetime模板 -->
+    <script type="text/template" id="rightupdatetimeTpl" async>
+      <span>{{createTime}}</span>
+      {{if package_type === 'v3' }}
+      <a onclick="downloadPlugin( '{{name}}' )" class="link version">{{version}}</a>
+      {{else}}
+      <a href="{{href}}" class="link version">{{version}}</a>
+      {{ /if }}
+    </script>
 
-</script>
-
-<!-- 注入rightupdatetime模板 -->
-<script type="text/template" id="rightupdatetimeTpl" async>
-  <span>{{createTime}}</span>
-  {{if package_type === 'v3' }}
-  <a onclick="downloadPlugin( '{{name}}' )" class="link version">{{version}}</a>
-  {{else}} 
-  <a href="{{href}}" class="link version">{{version}}</a>
-  {{ /if }}
-
-</script>
-
-
-<!-- 注入websiteproject模板 -->
-<script type="text/template" id="websiteprojectTpl" async>
-    {{if home }}
-    <a class="nav-link" id="pills-review-tab-new" target="_blank" href="{{home}}">项目网站</a>
-    {{else}} 
-    <a class="nav-link" id="pills-review-tab-new" style="pointer-events: none;"><s>项目网站</s></a>
-    {{ /if }}
-</script>
-
+    <!-- 注入websiteproject模板 -->
+    <script type="text/template" id="websiteprojectTpl" async>
+      {{if home }}
+      <a class="nav-link" id="pills-review-tab-new" target="_blank" href="{{home}}">项目网站</a>
+      {{else}}
+      <a class="nav-link" id="pills-review-tab-new" style="pointer-events: none;"><s>项目网站</s></a>
+      {{ /if }}
+    </script>
 
     <script>
       function getQueryVariable(variable) {
@@ -551,7 +549,7 @@
       }
 
       function downloadPlugin(name) {
-        downloadV3Plugin(name)
+        downloadV3Plugin(name);
       }
 
       function insertParam(
@@ -585,125 +583,154 @@
       // V2: 获取应用详情内容接口
       function getDetailV2() {
         var base_url = BASE_V2_URL;
-        _Post(base_url + "/package/content", `name=${getQueryVariable("name")}`, 
-        function (tempData) {
-          if (!tempData) {
-            return ;
-          }
-          
-          renderTpl('titleTpl', 
-          { 
-            name: tempData.name,
-            createTime: tempData&&tempData.create&&tempData.create.split("T")[0],
-            version:  tempData.version,
-            package_type: 'v2'
-          }, 
-          '#title'
-          )
+        _Post(
+          base_url + "/package/content",
+          `name=${getQueryVariable("name")}`,
+          function (tempData) {
+            if (!tempData) {
+              return;
+            }
 
-         //   <!--====== Banner Start ======-->
-          renderTpl('packageTypeTpl', 
-              { 
+            renderTpl(
+              "titleTpl",
+              {
+                name: tempData.name,
+                createTime:
+                  tempData && tempData.create && tempData.create.split("T")[0],
+                version: tempData.version,
+                package_type: "v2",
+              },
+              "#title"
+            );
+
+            //   <!--====== Banner Start ======-->
+            renderTpl(
+              "packageTypeTpl",
+              {
                 packagetype: {
                   component: "组件详情",
                   application: "应用详情",
                   plugin: "插件详情",
                 }[tempData.type],
 
-                package_type: 'v2'
-              }, 
-              '#packagetype'
-          )
+                package_type: "v2",
+              },
+              "#packagetype"
+            );
 
-          // product-details
-          renderTpl('descriptionTpl', 
-              { 
-                description: tempData.description
-              }, 
-              '#description'
-         )
+            // product-details
+            renderTpl(
+              "descriptionTpl",
+              {
+                description: tempData.description,
+              },
+              "#description"
+            );
 
-          renderTpl('piContentTpl', 
-            { 
-              avatar_url: tempData&&tempData.userInformation&&tempData.userInformation.avatar_url,
-              html_url: tempData&&tempData.userInformation&&tempData.userInformation.html_url,
-              user: tempData&&tempData.userInformation&&tempData.userInformation.user
-            }, 
-            '#pi-content'
-          )
+            renderTpl(
+              "piContentTpl",
+              {
+                avatar_url:
+                  tempData &&
+                  tempData.userInformation &&
+                  tempData.userInformation.avatar_url,
+                html_url:
+                  tempData &&
+                  tempData.userInformation &&
+                  tempData.userInformation.html_url,
+                user:
+                  tempData &&
+                  tempData.userInformation &&
+                  tempData.userInformation.user,
+              },
+              "#pi-content"
+            );
 
-          renderTpl('rightupdatetimeTpl', 
-            { 
-              createTime: tempData&&tempData.create&&tempData.create.split("T")[0],
-              version:tempData.version,
-              href: `https://registry.devsapp.cn/simple/${tempData.name}/zipball/${tempData.version}`,
-              package_type: 'v2'
-            }, 
-            '#rightupdatetime'
-          )
-   
-          renderTpl('tagslistTpl', 
-            { 
-              data: tempData.tags,
-            }, 
-            '#tagslist'
-          )
-          
+            renderTpl(
+              "rightupdatetimeTpl",
+              {
+                createTime:
+                  tempData && tempData.create && tempData.create.split("T")[0],
+                version: tempData.version,
+                href: `https://registry.devsapp.cn/simple/${tempData.name}/zipball/${tempData.version}`,
+                package_type: "v2",
+              },
+              "#rightupdatetime"
+            );
 
-          renderTpl('providerTpl', // 与tagslistTpl 使用同一个模版
-            { 
-              data: tempData.provider&&tempData.provider.join("  "),
-              package_type: 'v2'
-            }, 
-            '#provider'
-          )
+            renderTpl(
+              "tagslistTpl",
+              {
+                data: tempData.tags,
+              },
+              "#tagslist"
+            );
+
+            renderTpl(
+              "providerTpl", // 与tagslistTpl 使用同一个模版
+              {
+                data: tempData.provider && tempData.provider.join("  "),
+                package_type: "v2",
+              },
+              "#provider"
+            );
 
             // mddata内容
-            var converter = new showdown.Converter();
-            var html = converter.makeHtml(tempData.readme);
+            var converter = window.markdownit({
+              html: true,
+              linkify: true,
+              typographer: true
+            });
+            var html = converter.render(tempData.readme);
             document.getElementById("mddata").innerHTML = html;
 
-            
             // serviceList模版内容
 
-            renderTpl('serviceListTpl',
-              { 
-              data: Object.keys(tempData.service),
-              service: tempData.service,
-              package_type: 'v2'
-              }, 
-              '#serviceList'
-             )
+            renderTpl(
+              "serviceListTpl",
+              {
+                data: Object.keys(tempData.service),
+                service: tempData.service,
+                package_type: "v2",
+              },
+              "#serviceList"
+            );
 
-            renderTpl('websiteprojectTpl', 
-              { 
+            renderTpl(
+              "websiteprojectTpl",
+              {
                 home: tempData.home,
-              }, 
-              '#websiteproject'
-            )
+              },
+              "#websiteproject"
+            );
 
-            renderTpl('quickTpl', 
-              { 
+            renderTpl(
+              "quickTpl",
+              {
                 type: tempData.type,
                 name: tempData.name,
-              }, 
-              '#quick'
-            )
-         
-            return ;
-        })
+              },
+              "#quick"
+            );
+
+            return;
+          }
+        );
       }
       // V2: 获取 Package 的所有版本接口
       function getHistoryVersionsV2() {
-        var base_url = BASE_V2_URL
-        var url = base_url + `/simple/${getQueryVariable("name")}/releases`
-        _Get(url, function (tempData) {
-          if (!tempData) {
-            return ;
-          }
-          var tempString = "";
+        var base_url = BASE_V2_URL;
+        var url = base_url + `/simple/${getQueryVariable("name")}/releases`;
+        _Get(
+          url,
+          function (tempData) {
+            if (!tempData) {
+              return;
+            }
+            var tempString = "";
             for (var i = 0; i < tempData.length; i++) {
-              tempString = tempString +
+              tempString =
+                tempString +
                 `<a href="https://registry.devsapp.cn/simple/${getQueryVariable(
                   "name"
                 )}/zipball/${
@@ -713,176 +740,218 @@
                 }) </a><br>`;
             }
             document.getElementById("historyversion").innerHTML = tempString;
-          return ;
-        }, 'response')
+            return;
+          },
+          "response"
+        );
       }
 
       // V3: 获取应用详情内容接口
       // /v3/packages/start-flask-v3/release/latest
       function getDetailV3() {
-        var base_url = BASE_V3_URL
-        var url = base_url + '/packages/'+getQueryVariable("name")+'/release/latest?'+ `package-name=${getQueryVariable("name")}`
-        _Get(url, function (tempData) {
-          if (!tempData) {
-            return ;
-          }
-         if (tempData.body) {
-          tempData = tempData.body
-          // console.log('tempData')
-          if (typeof tempData === 'string') {
-            renderTpl('titleTpl', 
-            { 
-              name: 'aliyun_oss_bucket',
-              createTime: undefined,
-              version:  undefined,
-              package_type: 'v3'
-            }, 
-             '#title'
-          )
-            document.getElementById("mddata").innerHTML = tempData;
-            $("#tagslist_container").hide()
-            $('[role="tablist"]').hide()
-            $('.box-one').hide()
-            $('#latest_container').hide()
-            return
-          }
-          renderTpl('titleTpl', 
-          { 
-            name: tempData.name,
-            createTime: tempData&&tempData.created_at&&tempData.created_at.split(" ")[0],
-            version:  tempData.tag_name,
-            package_type: 'v3'
-          }, 
-          '#title'
-          )
-
-          //   <!--====== Banner Start ======-->
-          renderTpl('packageTypeTpl', 
-              { 
-                packagetype: {
-                  'Project': "应用详情",
-                  'Application': "应用详情",
-                  'Plugin': "插件详情",
-                  'Component': "组件详情",
-                }[tempData.type],
-                package_type: 'v3'
-              }, 
-              '#packagetype'
-          )
-
-          // product-details
-          renderTpl('descriptionTpl', 
-              { 
-                description: tempData.description
-              }, 
-              '#description'
-         )
-
-         renderTpl('piContentTpl', 
-            { 
-              package_type: 'v3'
-            }, 
-            '#pi-content'
-          )
-
-          renderTpl('rightupdatetimeTpl', 
-            { 
-              createTime: tempData&&tempData.created_at&&tempData.created_at.split("T")[0],
-              version:tempData.tag_name,
-              name: tempData.name,
-              package_type: 'v3'
-            }, 
-            '#rightupdatetime'
-          )  
-
-          if(tempData.tags){
-            renderTpl('tagslistTpl', 
-            { 
-              data: tempData.tags,
-            }, 
-            '#tagslist'
-            )
-          }else{
-            $("#tagslist_container").hide()
-          }
-          
-
-           renderTpl('providerTpl', // 与tagslistTpl 使用同一个模版
-             { 
-               data: tempData.provider&&tempData.provider.join("  "),
-               package_type: 'v3'
-             }, 
-             '#provider'
-           )
-
-            // mddata内容
-            var converter = new showdown.Converter();
-            // @TODO: 更新下makeHtml 解析插件
-            var html = converter.makeHtml(tempData.readme);
-            document.getElementById("mddata").innerHTML = html;
-
-            // serviceList模版内容
-            renderTpl('serviceListTpl',
-              { 
-              data: tempData.service,
-              package_type: 'v3'
-              }, 
-              '#serviceList'
-             )
-
-            renderTpl('websiteprojectTpl', 
-              { 
-                home: tempData.home,
-              }, 
-              '#websiteproject'
-            )
-
-            renderTpl('quickTpl', 
-              { 
-                type: (tempData.type==="Project"||tempData.type==="Application")? "application":tempData.type,
-
-                name: tempData.name,
-              }, 
-              '#quick'
-            )
+        var base_url = BASE_V3_URL;
+        var url =
+          base_url +
+          "/packages/" +
+          getQueryVariable("name") +
+          "/release/latest?" +
+          `package-name=${getQueryVariable("name")}`;
+        _Get(
+          url,
+          function (tempData) {
+            if (!tempData) {
+              return;
             }
-            return ;
-        }, 'isAllData')
+            if (tempData.body) {
+              tempData = tempData.body;
+              // console.log('tempData')
+              if (typeof tempData === "string") {
+                renderTpl(
+                  "titleTpl",
+                  {
+                    name: "aliyun_oss_bucket",
+                    createTime: undefined,
+                    version: undefined,
+                    package_type: "v3",
+                  },
+                  "#title"
+                );
+                document.getElementById("mddata").innerHTML = tempData;
+                $("#tagslist_container").hide();
+                $('[role="tablist"]').hide();
+                $(".box-one").hide();
+                $("#latest_container").hide();
+                return;
+              }
+              renderTpl(
+                "titleTpl",
+                {
+                  name: tempData.name,
+                  createTime:
+                    tempData &&
+                    tempData.created_at &&
+                    tempData.created_at.split(" ")[0],
+                  version: tempData.tag_name,
+                  package_type: "v3",
+                },
+                "#title"
+              );
+
+              //   <!--====== Banner Start ======-->
+              renderTpl(
+                "packageTypeTpl",
+                {
+                  packagetype: {
+                    Project: "应用详情",
+                    Application: "应用详情",
+                    Plugin: "插件详情",
+                    Component: "组件详情",
+                  }[tempData.type],
+                  package_type: "v3",
+                },
+                "#packagetype"
+              );
+
+              // product-details
+              renderTpl(
+                "descriptionTpl",
+                {
+                  description: tempData.description,
+                },
+                "#description"
+              );
+
+              renderTpl(
+                "piContentTpl",
+                {
+                  package_type: "v3",
+                },
+                "#pi-content"
+              );
+
+              renderTpl(
+                "rightupdatetimeTpl",
+                {
+                  createTime:
+                    tempData &&
+                    tempData.created_at &&
+                    tempData.created_at.split("T")[0],
+                  version: tempData.tag_name,
+                  name: tempData.name,
+                  package_type: "v3",
+                },
+                "#rightupdatetime"
+              );
+
+              if (tempData.tags) {
+                renderTpl(
+                  "tagslistTpl",
+                  {
+                    data: tempData.tags,
+                  },
+                  "#tagslist"
+                );
+              } else {
+                $("#tagslist_container").hide();
+              }
+
+              renderTpl(
+                "providerTpl", // 与tagslistTpl 使用同一个模版
+                {
+                  data: tempData.provider && tempData.provider.join("  "),
+                  package_type: "v3",
+                },
+                "#provider"
+              );
+
+              // mddata内容
+              var converter = window.markdownit({
+                html: true,
+                linkify: true,
+                typographer: true
+              });
+              // @TODO: 更新下makeHtml 解析插件
+              var html = converter.render(tempData.readme);
+              document.getElementById("mddata").innerHTML = html;
+
+              // serviceList模版内容
+              renderTpl(
+                "serviceListTpl",
+                {
+                  data: tempData.service,
+                  package_type: "v3",
+                },
+                "#serviceList"
+              );
+
+              renderTpl(
+                "websiteprojectTpl",
+                {
+                  home: tempData.home,
+                },
+                "#websiteproject"
+              );
+
+              renderTpl(
+                "quickTpl",
+                {
+                  type:
+                    tempData.type === "Project" ||
+                    tempData.type === "Application"
+                      ? "application"
+                      : tempData.type,
+
+                  name: tempData.name,
+                },
+                "#quick"
+              );
+            }
+            return;
+          },
+          "isAllData"
+        );
       }
 
       // V3: 获取Package所有版本接口
       // /v3/packages/{package-name}/release
       function getHistoryVersionsV3() {
-        var base_url = BASE_V3_URL
-        var name = getQueryVariable("name")
-        var url = base_url + `/packages/${name}/release`
-        _Get(url, function (res) {
-          var tempData = res.body||res.Response;
+        var base_url = BASE_V3_URL;
+        var name = getQueryVariable("name");
+        var url = base_url + `/packages/${name}/release`;
+        _Get(
+          url,
+          function (res) {
+            var tempData = res.body || res.Response;
 
-            if(tempData){
+            if (tempData) {
               var tempString = "";
               for (var i = 0; i < tempData.length; i++) {
-              var item = tempData[i];
-              tempString = tempString +
-                `<a href="${item.zipball_url}" target="_blank" class="link"> V${item.tag_name} (${
-                  item.created_at.split("T")[0]
-                }) </a><br>`;
+                var item = tempData[i];
+                tempString =
+                  tempString +
+                  `<a href="${
+                    item.zipball_url
+                  }" target="_blank" class="link"> V${item.tag_name} (${
+                    item.created_at.split("T")[0]
+                  }) </a><br>`;
               }
               document.getElementById("historyversion").innerHTML = tempString;
             }
-          
-          return ;
-        }, 'isAllData')
+
+            return;
+          },
+          "isAllData"
+        );
       }
 
       function main() {
-        const package_type = getQueryVariable("package_type")||'v2'
-        if (package_type==='v2') {
+        const package_type = getQueryVariable("package_type") || "v2";
+        if (package_type === "v2") {
           getDetailV2();
           getHistoryVersionsV2();
-        }else if (package_type==='v3') {
+        } else if (package_type === "v3") {
           getDetailV3();
-          getHistoryVersionsV3()
+          getHistoryVersionsV3();
         }
       }
       main();

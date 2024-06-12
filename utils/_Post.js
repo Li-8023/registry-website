@@ -1,12 +1,12 @@
 // post方法 默认返回Response
-function _Post(url, queryString,callback) {
+function _Post(url, queryString,callback,async=false) {
   var xmlhttp = window.XMLHttpRequest
   ? new XMLHttpRequest()
   : new ActiveXObject("Microsoft.XMLHTTP");
 xmlhttp.open(
   "POST",
   url,
-  false
+  async
 );
 xmlhttp.onreadystatechange = function () {
   if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
