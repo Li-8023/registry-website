@@ -661,6 +661,19 @@
        // 2. 调用V3接口  获取V3分类
        function getCategory(){
         var categoryList = []; // package_type
+        ;(function getCategoryV2() {
+          _GetJSON("https://registry.devsapp.cn/common/category", function (tempData) {
+            for (var key in tempData) {
+              var obj = {}
+              var value = tempData[key]
+              // obj["package_type"] = 'v2'
+              obj["id"] = key
+              obj['name'] = value
+              categoryList.push(obj)
+            }
+          });
+        })()
+       
         ;(function getCategoryV3() {
           var base_url = BASE_V3_URL;
           _GetJSON(base_url + '/common/categories', function (tempData) {
@@ -694,19 +707,20 @@
           });
         })();
         
-        ;(function getCategoryV2() {
-          _GetJSON("https://registry.devsapp.cn/common/category", function (tempData) {
-            for (var key in tempData) {
-              var obj = {}
-              var value = tempData[key]
-              // obj["package_type"] = 'v2'
-              obj["id"] = key
-              obj['name'] = value
-              categoryList.push(obj)
-            }
-          });
-        })()
-       
+
+          // 查找ID为2的元素
+          var itemToMove = categoryList.find(item => (item.id === 2 || item.id === '2'));
+
+          if (itemToMove) {
+            // 移除该元素
+            var indexToRemove = categoryList.indexOf(itemToMove);
+            categoryList.splice(indexToRemove, 1);
+          
+            // 插入到新位置
+            var newIndex = 1; // 目标索引位置
+            categoryList.splice(newIndex, 0, itemToMove);
+          }
+
          // 渲染的方法: 渲染分类数据
          setBaseList(categoryList, "categorylist", 'category');
        }
