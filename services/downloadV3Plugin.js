@@ -5,6 +5,10 @@ function downloadV3Plugin(name) {
     var base_url = BASE_V3_URL
      var url = base_url + '/packages/'+name+'/release/latest'
      _Get(url, function (res) {
+      if (res.body==="未找到指定资源") {
+        alert('未找到指定资源')
+        return;
+      }
        var result = res.body||res.Response;
        if (result && result.zipball_url) {
          const link = document.createElement('a');

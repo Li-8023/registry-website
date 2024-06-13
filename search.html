@@ -343,12 +343,17 @@
     <script src="utils/_Get.js"></script>
     <script src="utils/_Post.js"></script>
     <script src="utils/renderTpl.js"></script>
+    <script src="utils/splitMaxLenth.js"></script>
     <script src="services/downloadV3Plugin.js"></script>
+    <script src="services/getPackagesSearchForV3.js"></script>
     <!-- 注入搜索模板 -->
 <script type="text/template" id="searchTpl">
   {{each data}}
   <div class="col-xl-4 wow fadeInUp" data-wow-delay="{{$value.delayTime}}s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
-    <div class="themes-box">
+    <div class="themes-box" style="overflow: hidden;">
+      {{if $value.package_type === 'v2' }}
+      <div class="ribbon" data-spm-anchor-id="5176.28448578.0.i154.758e60cczu7hm5">仅维护</div>
+      {{ /if }}
         <div class="main-content">
             <h5><a href="details.html?name={{$value.name}}&package_type={{$value.package_type}}" class="text-flow-ellipsis-single">{{$imports.splitMaxLenth($value.name)}}</a> <i class="fas fa-fire" style="float: right; color: orange;"> {{$value.download}} </i></h5>
             <div class="last-part">
@@ -357,9 +362,13 @@
                         <i class="fas fa-rocket"></i> {{$value.type}}&nbsp;&nbsp;&nbsp;
 
                         {{if $value.published_at }}
-                        |&nbsp;&nbsp;&nbsp; <i class="fas fa-calendar"></i> {{$value.published_at}}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                        |&nbsp;&nbsp;&nbsp; <i class="fas fa-calendar"></i> {{$value.published_at}}
                         {{ /if }}
 
+                        {{if $value.published_at&&$value.version }}
+                        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                        {{ /if }}
+                        
                         {{if $value.version }}
                         <i class="fas fa-desktop"></i> V{{$value.version}}
                         {{ /if }}
@@ -388,11 +397,6 @@
     {{/each}}
 </script>
     <script>
-     
-      function splitMaxLenth (dataStr) {
-        return dataStr.length > 25 ? dataStr.slice(0, 25) + "...": dataStr;
-      }
-
       // 列表存储数据
       var dataList = [];
       function downloadPlugin(name) {
@@ -443,12 +447,9 @@
 
       // V3: 搜索/获取 Package 信息
       function getPackagesV3() {
-        var base_url = BASE_V3_URL
-        var url = base_url + '/packages/releases?'+ `search=${getQueryVariable("keyword")}`
-        _Get(url, function (result) {
+        getPackagesSearchForV3(`search=${getQueryVariable("keyword")}`, function (result) {
           var keys = Object.keys(result);
             var times = [0.3, 0.2, 0.1];
-
             for (var i = 0; i < keys.length; i++) {
               var item = {};
               item.delayTime = times[Math.floor(Math.random() * times.length)];
@@ -460,8 +461,8 @@
                             'Component': "组件",
                           }[result[keys[i]].type];
               item.download = result[keys[i]].download;
-              //   item.published_at = result[keys[i]].version.published_at.split("T")[0]
-              item.published_at = ''
+              item.published_at = result[keys[i]].latest_create.split(" ")[0];
+              // item.published_at = ''
               //   item.version = result[keys[i]].version.tag_name;
               item.version = '';
               item.description = result[keys[i]].description;
@@ -470,7 +471,6 @@
               item.package_type = 'v3'; // v2 v3标识
               dataList.push(item);
             }
-
             return ;
         })
       }
@@ -484,7 +484,11 @@
         getPackagesV2();
 
         if(dataList && dataList.length > 0){
+          // @todo 增加去重，如果v2 v3存在相同name应用, 只展示v2应用
+          // 去重
           renderTpl('searchTpl', { data: dataList }, '#itemlist')
+        }else{
+          renderTpl('searchTpl', { data: [] }, '#itemlist')
         }
       }
 

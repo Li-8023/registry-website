@@ -243,6 +243,7 @@
                     placeholder="Search"
                     required=""
                     id="searchdata"
+                    onkeydown="if(event.keyCode==13)getPackages()"
                   />
                   <button onclick="getPackages()">
                     <i class="fas fa-search"></i>
@@ -363,6 +364,7 @@
         </div>
       </div>
     </div>
+
     <!--====== Footer Area END ======-->
 
     <!--====== Back to top start ======-->
@@ -385,8 +387,72 @@
     <script src="static/js/jquery.nice-select.min.js"></script>
     <!--====== Wow ======-->
     <script src="static/js/wow.min.js"></script>
+    <!-- ====== 模版引擎 ====== -->
+    <script src="vendors/art-template/template-web.js"></script>
     <!--====== Main JS ======-->
     <script src="static/js/main.js"></script>
+
+    <script src="config/URL.js"></script>
+    <script src="utils/_Get.js"></script>
+    <script src="utils/_Post.js"></script>
+    <script src="utils/renderTpl.js"></script>
+    <script src="utils/splitMaxLenth.js"></script>
+    <script src="services/downloadV3Plugin.js"></script>
+    <script src="services/getPackagesSearchForV3.js"></script>
+    <!-- 注入总数模版 -->
+    <script type="text/template" id="totalTpl">
+      <i class="fas fa-list"></i> 找到 {{total}} 条结果
+    </script>
+
+    <!-- 注入搜索模板 -->
+    <script type="text/template" id="searchTpl">
+      {{each data}}
+      <div class="col-xl-6 wow fadeInUp" data-wow-delay="{{$value.delayTime}}s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
+        <div class="themes-box" style="overflow: hidden;">
+          {{if $value.package_type === 'v2' }}
+          <div class="ribbon" data-spm-anchor-id="5176.28448578.0.i154.758e60cczu7hm5">仅维护</div>
+          {{ /if }}
+            <div class="main-content">
+                <h5><a href="details.html?name={{$value.name}}&package_type={{$value.package_type}}" class="text-flow-ellipsis-single">{{$imports.splitMaxLenth($value.name, 27)}}</a> <i class="fas fa-fire" style="float: right; color: orange;"> {{$value.download}} </i></h5>
+                <div class="last-part">
+                    <div class="right" style="width: 100%">
+                        <p class="text" style="width: 100%">
+                            {{if $value.published_at }}
+                            <i class="fas fa-calendar"></i> {{$value.published_at}}
+                            {{ /if }}
+
+                            {{if $value.published_at&&$value.version }}
+                            &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                            {{ /if }}
+
+                            {{if $value.version }}
+                            <i class="fas fa-desktop"></i> V{{$value.version}}
+                            {{ /if }}
+                        </p>
+                        <p class="text-flow-ellipsis-multiple" style="height: 70px">
+                          {{$value.description}}
+                        </p>
+                    </div>
+                </div>
+                    <div class="past-part" style="margin-top: 10px">
+                    <center>
+                        <div class="buton">
+                            <a href="details.html?name={{$value.name}}&package_type={{$value.package_type}}" class="preButton"> <i class="fas fa-book"></i> 查看详情 </a>
+                            {{if $value.zipball_url }}
+                            <a href="{{$value.zipball_url}}" target="_blank" class="download"> <i class="fas fa-download"></i> 下载组件 </a>
+                            {{else}}
+                            <a onclick="downloadPlugin( '{{$value.name}}' )" class="download"> <i class="fas fa-download"></i> 下载组件 </a>
+                            {{ /if }}
+                        </div>
+                        </center>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </script>
+
     <script>
       function getQueryVariable(variable) {
         var query = window.location.search.substring(1);
@@ -428,179 +494,366 @@
         }
       }
 
-      function getBaseList(name, detail) {
-        const xmlhttp = window.XMLHttpRequest
-          ? new XMLHttpRequest()
-          : new ActiveXObject("Microsoft.XMLHTTP");
-        xmlhttp.open("GET", detail["url"], false);
-        xmlhttp.onreadystatechange = function () {
-          if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-            let tempData = JSON.parse(xmlhttp.responseText);
-            const newData = {};
-            if (name == "provider") {
-              const tempKeys = Object.keys(tempData);
-              for (let i = 0; i < tempKeys.length; i++) {
-                newData[tempData[tempKeys[i]]] = tempData[tempKeys[i]];
-              }
-              tempData = newData;
-            }
-            setBaseList(tempData, detail["id"], name);
+      function downloadPlugin(name) {
+        downloadV3Plugin(name);
+      }
+
+      function onClick(value, key, package_type, name) {
+        var obj = {};
+        if (key === "category") {
+          obj[key] = value;
+          if (getQueryVariable("provider")) {
+            obj["provider"] = getQueryVariable("provider");
           }
-        };
-        xmlhttp.setRequestHeader("Content-type", "application/json");
-        xmlhttp.send();
+          if (getQueryVariable("package_type")) {
+            obj["package_type"] = getQueryVariable("package_type");
+          }
+          if (name) {
+            // 添加一个category_name字段
+            obj["category_name"] = name;
+          }
+        }
+
+        if (key === "provider") {
+          obj[key] = value;
+          if (getQueryVariable("category")) {
+            obj["category"] = getQueryVariable("category");
+          }
+          if (getQueryVariable("category_name")) {
+            // 添加一个category_name字段
+            obj["category_name"] = getQueryVariable("category_name");
+          }
+          if (package_type) {
+            obj["package_type"] = package_type;
+          }
+        }
+
+        window.location.href = objectSerialize(obj);
       }
 
       function setBaseList(listData, idName, name) {
         var attrString = "";
-        const keys = ["-1"].concat(Object.keys(listData));
-        for (let i = 0; i < keys.length; i++) {
+        var keys = [
+          {
+            id: "-1",
+            name: "全部",
+            package_type: "",
+          },
+          ...listData,
+        ];
+        for (var i = 0; i < keys.length; i++) {
+          var item = keys[i];
+          // console.log(item.id, item.name, item.package_type);
           attrString =
             attrString +
             `<li>
-                                            <a href="${
-                                              insertParam(
-                                                name,
-                                                keys[i]
-                                              ).startsWith("?")
-                                                ? insertParam(name, keys[i])
-                                                : "?" +
-                                                  insertParam(name, keys[i])
-                                            }" class="link ${
-              keys[i] == decodeURI(getQueryVariable(name) || "-1")
+              <a onclick="onClick('${item.id}', '${name}','${
+              item.package_type
+            }', '${item.name}')" class="link ${
+              item.id == decodeURI(getQueryVariable(name) || "-1")
                 ? "active"
                 : ""
             }">
-                                                <span>${
-                                                  listData[keys[i]] || "全部"
-                                                }</span>
-                                            </a>
-                                      </li>`;
+              <span>${item.name || "全部"}</span>
+             </a>
+           </li>`;
         }
+
         document.getElementById(idName).innerHTML = attrString;
       }
 
-      function getBaseInfor() {
-        const attrList = {
-          category: {
-            url: "https://registry.devsapp.cn/common/category",
-            id: "categorylist",
-          },
-          provider: {
-            url: "https://registry.devsapp.cn/common/provider",
-            id: "providerlist",
-          },
-        };
-        for (let i = 0; i < Object.keys(attrList).length; i++) {
-          getBaseList(
-            Object.keys(attrList)[i],
-            attrList[Object.keys(attrList)[i]]
-          );
-        }
-      }
-
       function getPackages() {
-        const selectData = document.getElementById("sortselect");
-        const index = selectData.selectedIndex;
-        console.log(document.getElementById("sortselect").selectedIndex);
-        const xmlhttp = window.XMLHttpRequest
-          ? new XMLHttpRequest()
-          : new ActiveXObject("Microsoft.XMLHTTP");
-        xmlhttp.open(
-          "POST",
-          "https://registry.devsapp.cn/package/search",
-          false
-        );
-        xmlhttp.onreadystatechange = function () {
-          if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            let itemString = "";
-            const result = JSON.parse(xmlhttp.responseText).Response;
-            const keys = Object.keys(result);
-            const times = [0.3, 0.2, 0.1];
-            for (let i = 0; i < keys.length; i++) {
-              itemString =
-                itemString +
-                `<div class="col-xl-6 wow fadeInUp" data-wow-delay="${
-                  times[Math.floor(Math.random() * times.length)]
-                }s">
-                        <div class="themes-box">
-                            <div class="main-content">
-                                <h5><a href="details.html?name=${
-                                  result[keys[i]].package
-                                }" class="text-flow-ellipsis-single">${
-                  result[keys[i]].package.length > 27
-                    ? result[keys[i]].package.slice(0, 27) + "..."
-                    : result[keys[i]].package
-                }</a> <i class="fas fa-fire" style="float: right; color: orange;"> ${
-                  result[keys[i]].download
-                } </i></h5>
-                                <div class="last-part">
-                                    <div class="right" style="width: 100%">
-                                        <p class="text" style="margin-bottom: 10px; width: 100%">
-                                        <i class="fas fa-calendar"></i> ${
-                                          result[
-                                            keys[i]
-                                          ].version.published_at.split("T")[0]
-                                        }&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-                                            <i class="fas fa-desktop"></i> V${
-                                              result[keys[i]].version.tag_name
-                                            }
-                                        </p>
-                                        <p class="text-flow-ellipsis-multiple" style="height: 70px">
-                                            ${result[keys[i]].description}
-                                        </p>
-                                    </div>
-                                </div>
-                                    <div class="past-part" style="margin-top: 10px">
-                                    <center>
-                                        <div class="buton">
-                                            <a href="details.html?name=${
-                                              result[keys[i]].package
-                                            }" class="preButton"> <i class="fas fa-book"></i> 查看详情 </a>
-                                            <a href="${
-                                              result[keys[i]].version
-                                                .zipball_url
-                                            }" target="_blank" class="download"> <i class="fas fa-download"></i> 下载组件 </a>
-                                        </div>
-                                        </center>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-            }
-            document.getElementById("itemlist").innerHTML = itemString;
-            document.getElementById(
-              "showinfo"
-            ).innerHTML = `<i class="fas fa-list"></i> 找到 ${
-              Object.keys(result).length
-            } 条结果`;
+        var selectData = document.getElementById("sortselect");
+        var index = selectData.selectedIndex;
+        var sort = selectData.options[index].value;
+        // console.log(document.getElementById("sortselect").selectedIndex);
+        // 列表存储数据
+        var dataList = [];
+        var v3Total = 0;
+        var v2Total = 0;
+        // 左侧内容主体区域
+        // V3: 搜索/获取 Package 信息
+        (function getPackagesV3() {
+          var data = `type=${V3_SEARCH_TYPE["Component"]}&sort=${sort}`;
+          if ((getQueryVariable("category") || "-1") !== "-1") {
+            // 如果是这个方法categrory传文字
+            data = insertParam(
+              "category",
+              getQueryVariable("category_name"),
+              data
+            );
           }
-        };
-        xmlhttp.setRequestHeader(
-          "Content-type",
-          "application/x-www-form-urlencoded"
-        );
-        let data = `type=Component&sort=${selectData.options[index].value}`;
-
-        if ((getQueryVariable("category") || "-1") !== "-1") {
-          data = insertParam("category", getQueryVariable("category"), data);
-        }
-        if (document.getElementById("searchdata").value) {
-          data = insertParam(
-            "keyword",
-            document.getElementById("searchdata").value,
-            data
+          if (document.getElementById("searchdata").value) {
+            data = insertParam(
+              "search",
+              document.getElementById("searchdata").value,
+              data
+            );
+          }
+          if ((getQueryVariable("provider") || "-1") !== "-1") {
+            data = insertParam("provider", getQueryVariable("provider"), data);
+          }
+          getPackagesSearchForV3(
+            data,
+            function (result) {
+              var keys = Object.keys(result);
+              var times = [0.3, 0.2, 0.1];
+              for (var i = 0; i < keys.length; i++) {
+                var item = {};
+                item.delayTime =
+                  times[Math.floor(Math.random() * times.length)];
+                item.name = result[keys[i]].name;
+                item.download = result[keys[i]].download;
+                item.published_at = result[keys[i]].latest_create.split(" ")[0];
+                item.published_at_source = dateFunction(
+                  result[keys[i]].latest_create
+                );
+                //   item.version = result[keys[i]].version.tag_name;
+                item.version = "";
+                item.description = result[keys[i]].description;
+                //   item.zipball_url = result[keys[i]].version.zipball_url;
+                item.zipball_url = "";
+                item.package_type = "v3"; // v2 v3标识
+                dataList.push(item);
+              }
+              v3Total = keys.length;
+              reRender(dataList, sort, v2Total, v3Total);
+              return;
+            },
+            true
           );
-        }
-        if ((getQueryVariable("provider") || "-1") !== "-1") {
-          data = insertParam("provider", getQueryVariable("provider"), data);
-        }
-        xmlhttp.send(data);
+        })();
+        // V2: 获取 Package 信息
+        (function getPackagesV2() {
+          // ===> type=Component&sort=time
+          // ===> type=Component&sort=download
+          // ===> type=Component&sort=download&keyword=core
+          // ===> 直接点击分类: type=Component&sort=time&category=25
+          // ===> 直接点击云厂商: type=Component&sort=time&category=25&provider=华为云
+          var data = `type=Component&sort=${sort}`;
+
+          if ((getQueryVariable("category") || "-1") !== "-1") {
+            data = insertParam("category", getQueryVariable("category"), data);
+          }
+          if (document.getElementById("searchdata").value) {
+            data = insertParam(
+              "keyword",
+              document.getElementById("searchdata").value,
+              data
+            );
+          }
+          if ((getQueryVariable("provider") || "-1") !== "-1") {
+            data = insertParam("provider", getQueryVariable("provider"), data);
+          }
+          // 如果发现是type为v3接口新增类型,则不调用v2
+          if (getQueryVariable("package_type") === "v3") {
+            return;
+          }
+
+          var base_url = BASE_V2_URL;
+          _Post(
+            base_url + "/package/search",
+            data,
+            function (result) {
+              var keys = Object.keys(result);
+              var times = [0.3, 0.2, 0.1];
+              for (var i = 0; i < keys.length; i++) {
+                var item = {};
+                item.delayTime =
+                  times[Math.floor(Math.random() * times.length)];
+                item.name = result[keys[i]].package;
+                item.download = result[keys[i]].download;
+                item.published_at =
+                  result[keys[i]].version.published_at.split("T")[0];
+                item.published_at_source = dateFunction(
+                  result[keys[i]].version.published_at
+                );
+                item.version = result[keys[i]].version.tag_name;
+                item.description = result[keys[i]].description;
+                item.zipball_url = result[keys[i]].version.zipball_url;
+                item.package_type = "v2"; // v2 v3标识
+                dataList.push(item);
+              }
+              v2Total = keys.length;
+              reRender(dataList, sort, v2Total, v3Total);
+            },
+            true
+          );
+        })();
       }
 
-      getPackages();
-      getBaseInfor();
+      // 获取 分类 / 信息
+      // 1. 调用V2接口  获取V2分类
+      // 2. 调用V3接口  获取V3分类
+      function getCategory() {
+        var categoryList = []; // package_type
+        (function getCategoryV2() {
+          _GetJSON(
+            "https://registry.devsapp.cn/common/category",
+            function (tempData) {
+              for (var key in tempData) {
+                var obj = {};
+                var value = tempData[key];
+                // obj["package_type"] = 'v2'
+                obj["id"] = key;
+                obj["name"] = value;
+                categoryList.push(obj);
+              }
+            }
+          );
+        })();
+        (function getCategoryV3() {
+          var base_url = BASE_V3_URL;
+          _GetJSON(base_url + "/common/categories", function (tempData) {
+            // 计算获取V3比V2多的分类item
+
+            var body = tempData.body;
+            if (body && body.length > 0) {
+              // 找出不在categoryList中的body对象
+              var notInArray1 = body
+                .filter(
+                  (obj2) =>
+                    !categoryList.find((obj1) => obj1.name === obj2.name)
+                )
+                .map((obj) => {
+                  return {
+                    //  'package_type':'v3',
+                    id: obj.id + "", // id属性转换为字符串
+                    name: obj.name,
+                  };
+                });
+
+              // categoryList.push({
+              //   'id': 2,
+              //   'name': 'Web 应用'
+              // })
+
+              // 合并两个数组
+              notInArray1.forEach((element) => {
+                categoryList.push(element);
+              });
+            }
+          });
+        })();
+
+        // 查找ID为2的元素
+        var itemToMove = categoryList.find(
+          (item) => item.id === 2 || item.id === "2"
+        );
+
+        if (itemToMove) {
+          // 移除该元素
+          var indexToRemove = categoryList.indexOf(itemToMove);
+          categoryList.splice(indexToRemove, 1);
+
+          // 插入到新位置
+          var newIndex = 1; // 目标索引位置
+          categoryList.splice(newIndex, 0, itemToMove);
+        }
+
+        // 渲染的方法: 渲染分类数据
+        setBaseList(categoryList, "categorylist", "category");
+      }
+
+      // 获取 云厂商 / 信息
+      // 1. 调用V2接口  获取V2云厂商
+      // 2. 调用V3接口  获取V3云厂商
+      function getProvider() {
+        var providerList = []; // package_type
+        (function getProviderV2() {
+          _GetJSON(
+            "https://registry.devsapp.cn/common/provider",
+            function (tempData) {
+              for (var key in tempData) {
+                var obj = {};
+                var value = tempData[key];
+                obj["package_type"] = "v2";
+                obj["id"] = value; // 如果是云厂商, 使用名称字符串搜索
+                obj["name"] = value;
+                providerList.push(obj);
+              }
+            },
+          );
+        })();
+        (function getProviderV3() {
+          var base_url = BASE_V3_URL;
+          _GetJSON(
+            base_url + "/common/providers",
+            function (tempData) {
+              // 计算获取V3比V2多的云厂商item
+              // console.log('v3---tempData===')
+              var body = tempData.body;
+              if (body && body.length > 0) {
+                // providerList.push({ 'package_type':'v3','_id': 8, 'name': '专有云'  ,'id': '专有云'   })
+                // providerList.push({ 'package_type':'v3','_id': 10,'name': '火山引擎', 'id': '火山引擎' })
+                // providerList.push({ 'package_type':'v3','_id': 11,'name': '天翼云'  ,'id': '天翼云'   })
+                // providerList.push({ 'package_type':'v3','_id': 12,'name': '移动云'  ,'id': '移动云'   })
+                // providerList.push({ 'package_type':'v3','_id': 13,'name': '联通云'  ,'id': '联通云'   })
+                // 找出不在providerList中的body对象
+                var notInArray1 = body
+                  .filter(
+                    (obj2) =>
+                      !providerList.find((obj1) => obj1.name === obj2.name)
+                  )
+                  .map((obj) => {
+                    return {
+                      package_type: "v3",
+                      id: obj.name,
+                      _id: obj.id,
+                      name: obj.name,
+                    };
+                  });
+
+                // 合并两个数组
+                notInArray1.forEach((element) => {
+                  providerList.push(element);
+                });
+
+                // 查找ID为10的元素
+                var itemToMove = providerList.find((item) => item._id === 10);
+
+                if (itemToMove) {
+                  // 移除该元素
+                  var indexToRemove = providerList.indexOf(itemToMove);
+                  providerList.splice(indexToRemove, 1);
+
+                  // 插入到新位置
+                  var newIndex = 1; // 目标索引位置
+                  providerList.splice(newIndex, 0, itemToMove);
+                }
+              }
+            },
+          );
+        })();
+        setBaseList(providerList, "providerlist", "provider");
+      }
+
+      function reRender(_dataList, sort, v2Total, v3Total) {
+        let dataList = [..._dataList];
+        if (dataList && dataList.length > 0) {
+          if (sort === "time") {
+            dataList = dataList.sort((a, b) =>
+              compareTimeStrings(b.published_at_source, a.published_at_source)
+            );
+          } else if (sort === "download") {
+            // 根据download字段排序
+            dataList = dataList.sort((a, b) => b.download - a.download);
+          }
+          renderTpl("searchTpl", { data: dataList }, "#itemlist");
+        } else {
+          renderTpl("searchTpl", { data: [] }, "#itemlist");
+        }
+
+        renderTpl("totalTpl", { total: v2Total + v3Total }, "#showinfo");
+      }
+
+      function main() {
+        getPackages();
+        getProvider();
+        getCategory();
+      }
+
+      main();
     </script>
     <script>
       //translate.ignore.tag.push('span'); //翻译时追加上自己想指定忽略的tag标签，凡是在这里面的，都不进行翻译。

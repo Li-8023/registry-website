@@ -7786,4 +7786,28 @@ div#preloader .loader-cubes .loader-cube .loader-cube3::before {
 }
 
 /*=======  Cart End  =======*/
+
+/* ribbon 右上角Tag标识 */
+.ribbon {
+  position: absolute;
+  right: -30px;
+  top: 5px;
+  height: 30px;
+  width: 100px;
+  display: block;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  transform: rotate(45deg);
+  z-index: 2;
+  color: #fff;
+  background: #557bf8;
+  font-weight: 700;
+  text-align: center;
+  line-height: 30px;
+  -webkit-box-shadow: 0 0 5px 1px rgba(27, 93, 190, .5);
+  box-shadow: 0 0 5px 1px rgba(27, 93, 190, .5);
+  -webkit-transition: all .1s;
+  -moz-transition: all .1s;
+  transition: all .1s;
+}
 /*# sourceMappingURL=style.css.map */
