@@ -243,6 +243,7 @@
                     placeholder="Search"
                     required=""
                     id="searchdata"
+                    onkeydown="if(event.keyCode==13)getPackages()"
                   />
                   <button onclick="getPackages()">
                     <i class="fas fa-search"></i>
