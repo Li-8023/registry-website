@@ -32,7 +32,9 @@ function _Get(url, callback, type, async=false) {
           return ;
         }
       }else{
-        callback&&callback(JSON.parse(xmlhttp.responseText))
+        try {
+          callback&&callback(JSON.parse(xmlhttp.responseText));
+        } catch {}
       }
     };
     xmlhttp.setRequestHeader(
