@@ -362,9 +362,13 @@
                         <i class="fas fa-rocket"></i> {{$value.type}}&nbsp;&nbsp;&nbsp;
 
                         {{if $value.published_at }}
-                        |&nbsp;&nbsp;&nbsp; <i class="fas fa-calendar"></i> {{$value.published_at}}&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                        |&nbsp;&nbsp;&nbsp; <i class="fas fa-calendar"></i> {{$value.published_at}}
                         {{ /if }}
 
+                        {{if $value.published_at&&$value.version }}
+                        &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+                        {{ /if }}
+                        
                         {{if $value.version }}
                         <i class="fas fa-desktop"></i> V{{$value.version}}
                         {{ /if }}
@@ -457,8 +461,8 @@
                             'Component': "组件",
                           }[result[keys[i]].type];
               item.download = result[keys[i]].download;
-              //   item.published_at = result[keys[i]].version.published_at.split("T")[0]
-              item.published_at = ''
+              item.published_at = result[keys[i]].latest_create.split(" ")[0];
+              // item.published_at = ''
               //   item.version = result[keys[i]].version.tag_name;
               item.version = '';
               item.description = result[keys[i]].description;
