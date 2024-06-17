@@ -21,7 +21,7 @@ jobs:
       
       - name: Install s
         run: npm i @serverless-devs/s -g
-      - run: s config add --AccessKeyID ${{secrets.AK}}  --AccessKeySecret ${{secrets.SK}} -a default -f 
+      - run: s config add --AccessKeyID ${{secrets.DEPLOY_AK}}  --AccessKeySecret ${{secrets.DEPLOY_SK}} -a default -f 
       - run: rm -rf .git
       - run: rm -rf .github
       - name: Deploy on FC
