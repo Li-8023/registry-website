@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+.text-flow-ellipsis-multiple {
+  word-break: break-all;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+.text-flow-ellipsis-single {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1500px) {
+  .title-name {
+    width: 180px;
+  }
+}
+
 /* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
