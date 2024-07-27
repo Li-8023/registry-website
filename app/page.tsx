@@ -4,7 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass, faTimes, faSearch, faCalendarAlt, faUser, faArrowRight, faArrowUp, faFire, faDesktop } from '@fortawesome/free-solid-svg-icons';
-
+import '../app/responsive.css';
+import '../app/style.css';
 
 const HomePage = () => {
   const [showSearch, setShowSearch] = useState(false);
@@ -17,10 +18,12 @@ const HomePage = () => {
     <div>
 
       {/* Header */}
-      <header className="sticky top-0 bg-gradient-to-r from-purple-600 via-indigo-500 to-blue-400 shadow-md z-10 p-4">
-        <div className="pb-1.5">
-          <div className="container mx-auto flex items-center justify-between">
-            <div className="header-left">
+      {/* <header className="sticky top-0 bg-gradient-to-r from-purple-600 via-indigo-500 to-blue-400 shadow-md z-10 p-4">
+       */}
+      <header className="header-two sticky-header z-10 p-4">
+        <div className="pb-1.5 header-navigation">
+          <div className="container mx-auto flex items-center justify-between container-1470">
+            <div className="header-left ">
               <h1 className="text-white">Serverless Registry</h1>
             </div>
             <div className="header-right flex items-center justify-end space-x-4">
@@ -63,34 +66,46 @@ const HomePage = () => {
                 </ul>
               </div>
               <div className="header-extra flex items-center space-x-4">
-                <div className="search-widget">
-                  <a href="#0" className="search-icon text-white" onClick={toggleSearch}>
-                    <FontAwesomeIcon icon={faMagnifyingGlass} />
+                <div className="search-widget relative">
+                  <a
+                    href="#0"
+                    className="search-icon text-gray-600 hover:text-gray-800"
+                    onClick={toggleSearch}
+                  >
+                    <FontAwesomeIcon icon={faSearch} />
                   </a>
                   {showSearch && (
-                    <div className="search-form mt-2">
+                    <div className="search-form absolute top-full mt-2 bg-white shadow-lg p-4 rounded">
                       <form action="search.html" method="GET">
                         <input
                           type="search"
                           placeholder="请输入要搜索的 Serverless Package 关键词"
                           name="keyword"
-                          className="form-control border rounded p-2"
+                          className="border border-gray-300 p-2 rounded w-full"
                         />
                       </form>
-                      <a href="#0" className="search-close text-white" onClick={toggleSearch}>
+                      <a
+                        href="#0"
+                        className="search-close text-gray-600 hover:text-gray-800 mt-2 inline-block"
+                        onClick={toggleSearch}
+                      >
                         <FontAwesomeIcon icon={faTimes} />
                       </a>
                     </div>
                   )}
                 </div>
                 <div className="offcanvas-widget hidden">
-                  <div className="offcanvas-icon">
-                    <span className="block w-5 h-0.5 bg-white mb-1"></span>
-                    <span className="block w-5 h-0.5 bg-white mb-1"></span>
-                    <span className="block w-5 h-0.5 bg-white"></span>
+                  <div className="offcanvas-icon flex flex-col space-y-1">
+                    <span className="block w-5 h-0.5 bg-gray-600"></span>
+                    <span className="block w-5 h-0.5 bg-gray-600"></span>
+                    <span className="block w-5 h-0.5 bg-gray-600"></span>
                   </div>
                 </div>
-
+                <div className="nav-toggler flex flex-col space-y-1 cursor-pointer">
+                  <span className="block w-5 h-0.5 bg-gray-600"></span>
+                  <span className="block w-5 h-0.5 bg-gray-600"></span>
+                  <span className="block w-5 h-0.5 bg-gray-600"></span>
+                </div>
               </div>
             </div>
           </div>
@@ -103,8 +118,8 @@ const HomePage = () => {
           <div className="flex justify-center">
             <div className="lg:w-10/12 wow fadeInUp" data-wow-delay="0.3s">
               <div className="banner-content text-center">
-                <h1 className="text-4xl font-bold">Serverless Registry</h1>
-                <p className="text-lg">
+                <h1 className="text-4xl font-bold text-white">Serverless Registry</h1>
+                <p className="text-lg mt-3 text-white">
                   Serverless 包管理平台：让你像使用手机一样玩转 Serverless 架构
                 </p>
                 <form action="search.html" method="GET">
@@ -145,7 +160,7 @@ const HomePage = () => {
             <div className="xl:w-3/12 md:w-6/12 text-center wow fadeInUp" data-wow-delay="0.2s">
               <div className="chose-box p-4">
                 <div className="thumb mb-4">
-                  <img src="static/picture/choose-1.png" alt="" className="mx-auto" />
+                 <img src="/picture/choose-1.png" alt="Choose 1" className="mx-auto" />
                 </div>
                 <h5 className="text-xl font-semibold mb-2">无厂商锁定</h5>
                 <p className="text-gray-700">
@@ -156,7 +171,7 @@ const HomePage = () => {
             <div className="xl:w-3/12 md:w-6/12 text-center wow fadeInUp" data-wow-delay="0.3s">
               <div className="chose-box p-4">
                 <div className="thumb mb-4">
-                  <img src="static/picture/choose-2.png" alt="" className="mx-auto" />
+                  <img src="/picture/choose-2.png" alt="" className="mx-auto" />
                 </div>
                 <h5 className="text-xl font-semibold mb-2">开源建设</h5>
                 <p className="text-gray-700">
@@ -167,7 +182,7 @@ const HomePage = () => {
             <div className="xl:w-3/12 md:w-6/12 text-center wow fadeInUp" data-wow-delay="0.4s">
               <div className="chose-box p-4">
                 <div className="thumb mb-4">
-                  <img src="static/picture/choose-3.png" alt="" className="mx-auto" />
+                  <img src="/picture/choose-3.png" alt="" className="mx-auto" />
                 </div>
                 <h5 className="text-xl font-semibold mb-2">开放生态</h5>
                 <p className="text-gray-700">
@@ -178,7 +193,7 @@ const HomePage = () => {
             <div className="xl:w-3/12 md:w-6/12 text-center wow fadeInUp" data-wow-delay="0.5s">
               <div className="chose-box p-4">
                 <div className="thumb mb-4">
-                  <img src="static/picture/choose-4.png" alt="" className="mx-auto" />
+                  <img src="/picture/choose-4.png" alt="" className="mx-auto" />
                 </div>
                 <h5 className="text-xl font-semibold mb-2 mt-2">免费提供</h5>
                 <p className="text-gray-700">
@@ -486,7 +501,7 @@ const HomePage = () => {
       {/* Blog End */}
 
       {/* Footer Area START */}
-      <footer className="footer-area py-12 bg-gray-800 text-white">
+      <footer className="footer-area two py-12 ">
         <div className="container mx-auto">
           <div className="flex flex-wrap justify-between">
             <div className="lg:w-1/3 md:w-1/2 mb-8 wow fadeInUp" data-wow-delay="0.2s">
@@ -512,7 +527,7 @@ const HomePage = () => {
             </div>
             <div className="lg:w-1/6 md:w-1/2 mb-8 wow fadeInUp" data-wow-delay="0.3s">
               <div className="footer-box two">
-                <h4 className="text-lg font-semibold mb-4">相关资源</h4>
+                <h4 className="lasthead">相关资源</h4>
                 <ul className="footer-list space-y-2">
                   <li>
                     <Link href="about.html" className="text-gray-400 hover:text-white">关于我们</Link>
@@ -534,7 +549,7 @@ const HomePage = () => {
             </div>
             <div className="lg:w-1/6 md:w-1/2 mb-8 wow fadeInUp" data-wow-delay="0.4s">
               <div className="footer-box three">
-                <h4 className="text-lg font-semibold mb-4">钉钉交流群</h4>
+                <h4 className="lasthead">钉钉交流群</h4>
                 <div className="footer-list">
                   <img src="https://serverless-article-picture.oss-cn-hangzhou.aliyuncs.com/1648814797378_20220401120637498673.png" className="w-24" />
                 </div>
@@ -542,7 +557,7 @@ const HomePage = () => {
             </div>
             <div className="lg:w-1/6 md:w-1/2 mb-8 wow fadeInUp" data-wow-delay="0.5s">
               <div className="footer-box none">
-                <h4 className="text-lg font-semibold mb-4">微信公众号</h4>
+                <h4 className="lasthead">微信公众号</h4>
                 <div className="footer-list">
                   <img src="https://serverless-article-picture.oss-cn-hangzhou.aliyuncs.com/1648814758343_20220401120558862369.png" className="w-24" />
                 </div>
@@ -560,11 +575,11 @@ const HomePage = () => {
       {/* Footer Area END */}
 
       {/* Back to top start */}
-      <div className="fixed bottom-4 right-4 bg-gray-800 text-white p-3 rounded-full shadow-lg">
+      {/* <div className="fixed bottom-4 right-4 bg-gray-800 text-white p-3 rounded-full shadow-lg">
         <a href="#0" className="flex items-center justify-center h-full w-full">
           <FontAwesomeIcon icon={faArrowUp} />
         </a>
-      </div>
+      </div> */}
       {/* Back to top end */}
     </div>
   );
