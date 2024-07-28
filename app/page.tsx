@@ -1,27 +1,51 @@
 // app/main/page.tsx
 "use client"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMagnifyingGlass, faTimes, faSearch, faCalendarAlt, faUser, faArrowRight, faArrowUp, faFire, faDesktop } from '@fortawesome/free-solid-svg-icons';
 import '../app/responsive.css';
 import '../app/style.css';
+import './component/main/BlogSection';
+import BlogSection from './component/main/BlogSection';
+
 
 const HomePage = () => {
   const [showSearch, setShowSearch] = useState(false);
-
+  const [isSticky, setIsSticky] = useState(false);
   const toggleSearch = () => {
     setShowSearch(!showSearch);
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setIsSticky(true);
+      } else {
+        setIsSticky(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (showSearch) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+  }, [showSearch]);
+
+
   return (
     <div>
-
-      {/* Header */}
-      {/* <header className="sticky top-0 bg-gradient-to-r from-purple-600 via-indigo-500 to-blue-400 shadow-md z-10 p-4">
-       */}
-      <header className="header-two sticky-header z-10 p-4">
-        <div className="pb-1.5 header-navigation">
+      <header className={`header-two navbar sticky-top sticky-header z-10 p-4 ${isSticky ? 'sticky-on' : ''}`}>
+        <div className="container-fluid">
           <div className="container mx-auto flex items-center justify-between container-1470">
             <div className="header-left ">
               <h1 className="text-white">Serverless Registry</h1>
@@ -75,36 +99,35 @@ const HomePage = () => {
                     <FontAwesomeIcon icon={faSearch} />
                   </a>
                   {showSearch && (
-                    <div className="search-form absolute top-full mt-2 bg-white shadow-lg p-4 rounded">
-                      <form action="search.html" method="GET">
-                        <input
-                          type="search"
-                          placeholder="请输入要搜索的 Serverless Package 关键词"
-                          name="keyword"
-                          className="border border-gray-300 p-2 rounded w-full"
-                        />
-                      </form>
-                      <a
-                        href="#0"
-                        className="search-close text-gray-600 hover:text-gray-800 mt-2 inline-block"
-                        onClick={toggleSearch}
-                      >
-                        <FontAwesomeIcon icon={faTimes} />
-                      </a>
+                    <div className="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center z-50">
+                      <div className="absolute top-0 right-0 mt-4 mr-4">
+                        <a
+                          href="#0"
+                          className="text-white"
+                          onClick={toggleSearch}
+                        >
+                          <FontAwesomeIcon icon={faTimes} size="2x" />
+                        </a>
+                      </div>
+                      <div className="relative">
+                        <form action="search.html" method="GET">
+                          <input
+                            type="search"
+                            placeholder="请输入要搜索的 Serverless Package 关键词                           "
+                            name="keyword"
+                            className="bg-transparent border border-white p-2 rounded w-80 text-white placeholder-white shadow-lg"
+                          />
+                        </form>
+                      </div>
                     </div>
                   )}
                 </div>
                 <div className="offcanvas-widget hidden">
                   <div className="offcanvas-icon flex flex-col space-y-1">
-                    <span className="block w-5 h-0.5 bg-gray-600"></span>
-                    <span className="block w-5 h-0.5 bg-gray-600"></span>
-                    <span className="block w-5 h-0.5 bg-gray-600"></span>
+                    <span className="block w-5 h-0.5 bg-red"></span>
+                    <span className="block w-5 h-0.5 bg-red"></span>
+                    <span className="block w-5 h-0.5 bg-red"></span>
                   </div>
-                </div>
-                <div className="nav-toggler flex flex-col space-y-1 cursor-pointer">
-                  <span className="block w-5 h-0.5 bg-gray-600"></span>
-                  <span className="block w-5 h-0.5 bg-gray-600"></span>
-                  <span className="block w-5 h-0.5 bg-gray-600"></span>
                 </div>
               </div>
             </div>
@@ -114,7 +137,7 @@ const HomePage = () => {
 
       {/* Banner */}
       <section className="banner two">
-        <div className="container mx-auto">
+        <div className="container">
           <div className="flex justify-center">
             <div className="lg:w-10/12 wow fadeInUp" data-wow-delay="0.3s">
               <div className="banner-content text-center">
@@ -122,19 +145,21 @@ const HomePage = () => {
                 <p className="text-lg mt-3 text-white">
                   Serverless 包管理平台：让你像使用手机一样玩转 Serverless 架构
                 </p>
-                <form action="search.html" method="GET">
+                <form action="search.html" method="GET" className="relative">
                   <div className="form-group flex items-center mt-4">
                     <input
                       type="text"
                       placeholder="搜索 Package ..."
-                      className="form-control p-2 border border-gray-300 rounded"
+                      className="form-control pr-10 p-2 border border-gray-300 rounded w-full"
                       name="keyword"
                     />
-                    <button className="main-btn icon ml-2 p-2 bg-indigo-500 text-white rounded">
+                    <button type="submit" className="absolute right-0 pr-3 flex items-center text-gray-500 bg-transparent border-none cursor-pointer">
                       <FontAwesomeIcon icon={faSearch} />
                     </button>
                   </div>
                 </form>
+
+
               </div>
             </div>
           </div>
@@ -144,6 +169,7 @@ const HomePage = () => {
       {/* Banner End */}
 
       {/* Why Choose Start */}
+
       <div className="why-choose py-12">
         <div className="container mx-auto">
           <div className="flex justify-center">
@@ -160,7 +186,7 @@ const HomePage = () => {
             <div className="xl:w-3/12 md:w-6/12 text-center wow fadeInUp" data-wow-delay="0.2s">
               <div className="chose-box p-4">
                 <div className="thumb mb-4">
-                 <img src="/picture/choose-1.png" alt="Choose 1" className="mx-auto" />
+                  <img src="/picture/choose-1.png" alt="Choose 1" className="mx-auto" />
                 </div>
                 <h5 className="text-xl font-semibold mb-2">无厂商锁定</h5>
                 <p className="text-gray-700">
@@ -230,7 +256,6 @@ const HomePage = () => {
         <div className="container-fluid mx-auto mt-8">
           <div className="flex justify-center">
             <div className="w-full wow fadeInUp" data-wow-delay="0.3s">
-              {/* owl-carousel owl-theme */}
               <div className="totalfetaure owl-carousel owl-theme" id="itemlist"></div>
             </div>
           </div>
@@ -365,140 +390,7 @@ const HomePage = () => {
       </div> */}
       {/* Testimonial End */}
 
-      {/* Blog-two Start */}
-      <section className="blog-two py-12">
-        <div className="container mx-auto">
-          <div className="flex flex-wrap justify-between items-center">
-            <div className="lg:w-7/12 md:w-7/12 wow fadeInUp">
-              <div className="section-head">
-                <h2 className="text-3xl font-bold mb-4">最佳事件案例与文档</h2>
-                <p className="text-lg text-gray-700">
-                  通过最佳实践，可以快速开发、贡献 Serverless Package
-                </p>
-              </div>
-            </div>
-            <div className="lg:w-3/12 md:w-5/12 wow fadeInUp">
-              <div className="link text-center md:text-right">
-                <Link href="docs.html" className="main-btn bg-blue-500 text-white py-2 px-4 rounded">
-                  查看全部文档
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-center mt-8">
-            <div className="lg:w-7/12 wow fadeInUp" data-wow-delay="0.3s">
-              <div className="blog-box border rounded-lg p-4">
-                <Link href="https://github.com/Serverless-Devs/Serverless-Devs/discussions/439" className="thumb">
-                  <img
-                    src="https://serverless-article-picture.oss-cn-hangzhou.aliyuncs.com/1648813335712_20220401114218504973.png"
-                    alt=""
-                    className="w-full rounded-lg"
-                  />
-                </Link>
-                <div className="main-content mt-4">
-                  <div className="flex justify-between text-gray-600 text-sm">
-                    <div className="flex items-center">
-                      <FontAwesomeIcon icon={faCalendarAlt} className="mr-1" />
-                      <span>2022.03.20</span>
-                    </div>
-                    <div className="flex items-center">
-                      <FontAwesomeIcon icon={faUser} className="mr-1" />
-                      <span>Anycods</span>
-                    </div>
-                  </div>
-                  <h5 className="text-xl font-semibold mt-4">
-                    <Link href="https://github.com/Serverless-Devs/Serverless-Devs/discussions/439">
-                      快速完成 Serverless Devs 应用开发并发布到 Registry
-                    </Link>
-                  </h5>
-                  <div className="last-part mt-4 flex justify-end">
-                    <Link href="https://github.com/Serverless-Devs/Serverless-Devs/discussions/439" className="text-blue-500 flex items-center">
-                      阅读详情
-                      <FontAwesomeIcon icon={faArrowRight} className="ml-1" />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="lg:w-5/12 flex flex-col justify-between mt-8 lg:mt-0 space-y-4">
-              <div className="right-box wow fadeInUp">
-                <Link href="https://github.com/Serverless-Devs/Serverless-Devs/blob/master/docs/zh/readme.md" className="flex items-start">
-                  <img
-                    style={{ width: '100px' }}
-                    src="https://serverless-article-picture.oss-cn-hangzhou.aliyuncs.com/1648814061808_20220401115422201406.png"
-                    alt=""
-                    className="rounded-lg"
-                  />
-                  <div className="right-part ml-4">
-                    <div className="date text-gray-600 text-sm">2021.06</div>
-                    <h6 className="text-lg font-semibold mt-2">
-                      <Link href="https://github.com/Serverless-Devs/Serverless-Devs/blob/master/docs/zh/readme.md">
-                        什么是 Serverless Devs ？
-                      </Link>
-                    </h6>
-                    <div className="last-part mt-2">
-                      <Link href="https://github.com/Serverless-Devs/Serverless-Devs/blob/master/docs/zh/readme.md" className="text-blue-500 flex items-center">
-                        阅读更多
-                        <FontAwesomeIcon icon={faArrowRight} className="ml-1" />
-                      </Link>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-              <div className="right-box wow fadeInUp">
-                <Link href="https://github.com/Serverless-Devs/Serverless-Devs/blob/master/spec/readme.md" className="flex items-start">
-                  <img
-                    style={{ width: '100px' }}
-                    src="https://serverless-article-picture.oss-cn-hangzhou.aliyuncs.com/1648814119666_20220401115519778987.png"
-                    alt=""
-                    className="rounded-lg"
-                  />
-                  <div className="right-part ml-4">
-                    <div className="date text-gray-600 text-sm">2022.04</div>
-                    <h6 className="text-lg font-semibold mt-2">
-                      <Link href="https://github.com/Serverless-Devs/Serverless-Devs/blob/master/spec/readme.md">
-                        Serverless Devs Model 规范文档
-                      </Link>
-                    </h6>
-                    <div className="last-part mt-2">
-                      <Link href="https://github.com/Serverless-Devs/Serverless-Devs/blob/master/spec/readme.md" className="text-blue-500 flex items-center">
-                        阅读更多
-                        <FontAwesomeIcon icon={faArrowRight} className="ml-1" />
-                      </Link>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-              <div className="right-box wow fadeInUp">
-                <Link href="https://github.com/Serverless-Devs/Serverless-Devs/discussions/407" className="flex items-start">
-                  <img
-                    style={{ width: '100px' }}
-                    src="https://serverless-article-picture.oss-cn-hangzhou.aliyuncs.com/1648814406516_20220401120006833466.png"
-                    alt=""
-                    className="rounded-lg"
-                  />
-                  <div className="right-part ml-4">
-                    <div className="date text-gray-600 text-sm">2022.01</div>
-                    <h6 className="text-lg font-semibold mt-2">
-                      <Link href="https://github.com/Serverless-Devs/Serverless-Devs/discussions/407">
-                        快速开发Serverless Package
-                      </Link>
-                    </h6>
-                    <div className="last-part mt-2">
-                      <Link href="https://github.com/Serverless-Devs/Serverless-Devs/discussions/407" className="text-blue-500 flex items-center">
-                        阅读更多
-                        <FontAwesomeIcon icon={faArrowRight} className="ml-1" />
-                      </Link>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Blog End */}
+      <BlogSection />
 
       {/* Footer Area START */}
       <footer className="footer-area two py-12 ">

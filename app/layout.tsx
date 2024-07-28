@@ -2,11 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'owl.carousel/dist/assets/owl.carousel.min.css';
-import 'magnific-popup/dist/magnific-popup.css';
-import 'animate.css/animate.min.css';
-// import 'font-awesome/css/font-awesome.min.css';
 import './fontawesome'; 
+import Bootstrap from '../public/bootstrap';
 
 const inter = Inter({ subsets: ["latin"] });
 

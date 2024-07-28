@@ -2014,6 +2014,13 @@ div#preloader .loader-cubes .loader-cube .loader-cube3::before {
 .header-navigation {
   z-index: 99999999999999;
 }
+/* .header-navigation {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+} */
 
 .header-navigation.breakpoint-on {
   padding: 20px 0;
@@ -2265,6 +2272,12 @@ div#preloader .loader-cubes .loader-cube .loader-cube3::before {
   left: 0px;
 }
 
+/* .header-two.sticky-header,
+.header-two.sticky-header.sticky-on {
+  height: 51.14px;
+  box-sizing: border-box;
+} */
+
 .header-two.sticky-header .header-navigation {
   background-color: rgba(255, 255, 255, 0);
   border-radius: 0px;
@@ -2305,7 +2318,9 @@ div#preloader .loader-cubes .loader-cube .loader-cube3::before {
 }
 
 .header-two.sticky-header.sticky-on {
-  background: #fff;
+  /* background: #fff; */
+   background: -webkit-gradient(linear, left top, right top, from(#7e3afb), to(#29b9f5));
+  background: linear-gradient(left, #7e3afb 0%, #29b9f5 100%);
 }
 
 .header-two.sticky-header.sticky-on .header-navigation {
