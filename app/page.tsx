@@ -115,7 +115,7 @@ const HomePage = () => {
                             type="search"
                             placeholder="请输入要搜索的 Serverless Package 关键词                           "
                             name="keyword"
-                            className="bg-transparent border border-white p-2 rounded w-80 text-white placeholder-white shadow-lg"
+                            className="bg-transparent border border-white p-2 rounded w-96 text-white placeholder-white shadow-lg"
                           />
                         </form>
                       </div>
@@ -141,8 +141,8 @@ const HomePage = () => {
           <div className="flex justify-center">
             <div className="lg:w-10/12 wow fadeInUp" data-wow-delay="0.3s">
               <div className="banner-content text-center">
-                <h1 className="text-4xl font-bold text-white">Serverless Registry</h1>
-                <p className="text-lg mt-3 text-white">
+                <h1 className="text-6xl font-bold text-white">Serverless Registry</h1>
+                <p className="text-lg mt-5 mb-2 text-white">
                   Serverless 包管理平台：让你像使用手机一样玩转 Serverless 架构
                 </p>
                 <form action="search.html" method="GET" className="relative">
@@ -158,8 +158,6 @@ const HomePage = () => {
                     </button>
                   </div>
                 </form>
-
-
               </div>
             </div>
           </div>
