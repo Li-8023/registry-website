@@ -1,3 +1,4 @@
+import Footer from "../components/Footer";
 import Header from "../components/Header";
 const ApplicationPage = () => {
   return (
@@ -19,6 +20,10 @@ const ApplicationPage = () => {
         </div>
       </section>
       {/* Banner end */}
+      <div className="mb-14">
+
+      </div>
+      <Footer />
     </div>
   );
 };
