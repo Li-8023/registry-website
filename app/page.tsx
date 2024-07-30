@@ -56,7 +56,7 @@ const HomePage = () => {
                 <p className="text-lg mt-5 mb-2 text-white">
                   Serverless 包管理平台：让你像使用手机一样玩转 Serverless 架构
                 </p>
-                <form action="search.html" method="GET" className="relative">
+                <form action="http://localhost:3000/search" method="GET" className="relative">
                   <div className="form-group flex items-center mt-4">
                     <input
                       type="text"
