@@ -6,9 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faSearch, faCalendarAlt, faUser, faArrowRight, faArrowUp, faFire, faDesktop } from '@fortawesome/free-solid-svg-icons';
 import '../app/responsive.css';
 import '../app/style.css';
-import './component/main/BlogSection';
-import BlogSection from './component/main/BlogSection';
-import Header from './component/Header';
+import BlogSection from './components/main/BlogSection';
+import Header from './components/Header';
 
 const HomePage = () => {
   const [showSearch, setShowSearch] = useState(false);

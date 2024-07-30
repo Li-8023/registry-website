@@ -50,9 +50,9 @@ const Header = () => {
           <div className="header-left">
             <h1 className="text-white">Serverless Registry</h1>
           </div>
-          <div className="header-right flex items-center justify-end space-x-4">
+          <div className="header-right flex items-center justify-end space-x-10">
             <div className="site-nav-menu">
-              <ul className="primary-menu flex space-x-4">
+              <ul className="primary-menu flex space-x-10">
                 <li className="current">
                   <Link href="/" className="nav-link text-white">
                     首页

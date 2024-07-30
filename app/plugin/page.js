@@ -1,5 +1,5 @@
 import Header from "../components/Header";
-const ApplicationPage = () => {
+const PluginPage = () => {
   return (
     <div>
       <Header />
@@ -8,12 +8,12 @@ const ApplicationPage = () => {
       <section class="breadcrumb-area">
         <div class="container">
           <div class="content">
-            <h2 class="breadd wow fadeInUp">应用 </h2>
+            <h2 class="breadd wow fadeInUp">插件 </h2>
             <ul class="breadcrumb-list wow fadeInUp">
               <li>
                 <a href="/">首页 /</a>
               </li>
-              <li>应用</li>
+              <li>插件</li>
             </ul>
           </div>
         </div>
@@ -23,4 +23,4 @@ const ApplicationPage = () => {
   );
 };
 
-export default ApplicationPage;
+export default PluginPage;
