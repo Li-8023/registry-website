@@ -59,6 +59,11 @@ const Header = () => {
                   </Link>
                 </li>
                 <li>
+                  <Link href="/resource" className="nav-link text-white">
+                  资源
+                  </Link>
+                </li>
+                <li>
                   <Link href="/application" className="nav-link text-white">
                     应用
                   </Link>

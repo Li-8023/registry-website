@@ -9,6 +9,7 @@ import '../app/style.css';
 import BlogSection from './components/main/BlogSection';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import CardItem from './components/card/CardItem';
 
 const HomePage = () => {
   const [showSearch, setShowSearch] = useState(false);
@@ -16,6 +17,37 @@ const HomePage = () => {
   const toggleSearch = () => {
     setShowSearch(!showSearch);
   };
+
+  const fakeData = [
+  {
+    name: "应用案例 1",
+    download: "1k",
+    published_at: "2023-01-01",
+    version: "1.0",
+    description: "这是一个应用案例的描述。",
+    zipball_url: "https://example.com/download1",
+    delayTime: 0.1,
+  },
+  {
+    name: "应用案例 2",
+    download: "2k",
+    published_at: "2023-02-01",
+    version: "1.1",
+    description: "这是另一个应用案例的描述。",
+    zipball_url: "https://example.com/download2",
+    delayTime: 0.2,
+  },
+  {
+    name: "应用案例 3",
+    download: "3k",
+    published_at: "2023-03-01",
+    version: "1.2",
+    description: "这是第三个应用案例的描述。",
+    zipball_url: "https://example.com/download3",
+    delayTime: 0.3,
+  },
+];
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,6 +72,7 @@ const HomePage = () => {
       document.body.style.overflow = 'auto';
     }
   }, [showSearch]);
+
 
 
   return (
@@ -143,6 +176,28 @@ const HomePage = () => {
 
       {/* Featured Start */}
       <section className="feature item three py-12">
+      <div className="container mx-auto">
+        <div className="flex flex-wrap justify-between items-center">
+          <div className="lg:w-5/12 md:w-6/12 wow fadeInUp" data-wow-delay="0.3s">
+            <div className="section-head">
+              <h2 className="text-3xl font-bold mb-4">热门应用</h2>
+              <p className="text-lg text-gray-700">
+                开发者们热衷的热门应用案例，可以通过 Serverless Devs 开发者工具快速体验
+              </p>
+            </div>
+          </div>
+          <div className="lg:w-3/12 md:w-6/12 wow fadeInUp" data-wow-delay="0.3s">
+            <div className="link text-center md:text-right">
+              <Link href="/application" className="main-btn bg-blue-500 text-white py-2 px-4 rounded">
+                查看所有应用案例
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+      {/* <section className="feature item three py-12">
         <div className="container mx-auto">
           <div className="flex flex-wrap justify-between items-center">
             <div className="lg:w-5/12 md:w-6/12 wow fadeInUp" data-wow-delay="0.3s">
@@ -169,7 +224,7 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Featured End */}
 

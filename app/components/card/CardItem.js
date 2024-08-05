@@ -18,6 +18,11 @@ const CardItem = ({ item }) => {
     console.log(`Downloading plugin: ${name}`);
   };
 
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    return new Date(dateString).toLocaleDateString("zh-CN", options);
+  };
+
   return (
     <div
       className="col-xl-6 wow fadeInUp mb-4"
@@ -32,19 +37,9 @@ const CardItem = ({ item }) => {
         className="themes-box shadow-lg rounded-2xl overflow-hidden"
         style={{ overflow: "hidden" }}
       >
-        {/* {item.package_type === "v2" && (
-          <div
-            className="ribbon"
-            data-spm-anchor-id="5176.28448578.0.i154.758e60cczu7hm5"
-          >
-            仅维护
-          </div>
-        )} */}
         <div className="main-content p-4">
           <h5 className="flex justify-between items-center">
-            <Link
-              href={`details.html?name=${item.name}&package_type=${item.package_type}`}
-            >
+            <Link href={`/details/${item.name}`}>
               {splitMaxLength(item.name, 27)}
             </Link>
             <span className="flex items-center text-orange-500">
@@ -55,12 +50,13 @@ const CardItem = ({ item }) => {
           <div className="last-part mt-8">
             <div className="right" style={{ width: "100%" }}>
               <p className="text" style={{ width: "100%" }}>
-                {item.published_at && (
+                {item.latest_create && (
                   <>
-                    <FontAwesomeIcon icon={faCalendar} /> {item.published_at}
+                    <FontAwesomeIcon icon={faCalendar} />{" "}
+                    {formatDate(item.latest_create)}
                   </>
                 )}
-                {item.published_at && item.version && (
+                {item.latest_create && item.version && (
                   <>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</>
                 )}
                 {item.version && (
@@ -80,9 +76,7 @@ const CardItem = ({ item }) => {
           <div className="past-part mt-4 ml-7">
             <center>
               <div className="button flex space-x-10">
-                <Link
-                  href={`details.html?name=${item.name}&package_type=${item.package_type}`}
-                >
+                <Link href={`/details/${item.name}`}>
                   <button
                     className="preButton btn btn-outline-primary"
                     style={{ backgroundColor: "#6676fa", color: "white" }}
