@@ -1,9 +1,9 @@
-// app/main/page.tsx
-"use client"
+"use client";
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {faSearch, faCalendarAlt, faUser, faArrowRight, faArrowUp, faFire, faDesktop } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSearch, faCalendarAlt, faUser, faArrowRight, faArrowUp, faFire, faDesktop } from '@fortawesome/free-solid-svg-icons';
 import '../app/responsive.css';
 import '../app/style.css';
 import BlogSection from './components/main/BlogSection';
@@ -14,40 +14,10 @@ import CardItem from './components/card/CardItem';
 const HomePage = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
+  const router = useRouter();
   const toggleSearch = () => {
     setShowSearch(!showSearch);
   };
-
-  const fakeData = [
-  {
-    name: "应用案例 1",
-    download: "1k",
-    published_at: "2023-01-01",
-    version: "1.0",
-    description: "这是一个应用案例的描述。",
-    zipball_url: "https://example.com/download1",
-    delayTime: 0.1,
-  },
-  {
-    name: "应用案例 2",
-    download: "2k",
-    published_at: "2023-02-01",
-    version: "1.1",
-    description: "这是另一个应用案例的描述。",
-    zipball_url: "https://example.com/download2",
-    delayTime: 0.2,
-  },
-  {
-    name: "应用案例 3",
-    download: "3k",
-    published_at: "2023-03-01",
-    version: "1.2",
-    description: "这是第三个应用案例的描述。",
-    zipball_url: "https://example.com/download3",
-    delayTime: 0.3,
-  },
-];
-
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,13 +43,17 @@ const HomePage = () => {
     }
   }, [showSearch]);
 
-
+  const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const keyword = (event.currentTarget.elements.namedItem('keyword') as HTMLInputElement).value;
+    router.push(`/resource?search=${keyword}`);
+  };
 
   return (
     <div>
       <Header />
 
-      {/* Banner */}
+       {/* Banner */}
       <section className="banner two">
         <div className="container">
           <div className="flex justify-center">
@@ -89,7 +63,7 @@ const HomePage = () => {
                 <p className="text-lg mt-5 mb-2 text-white">
                   Serverless 包管理平台：让你像使用手机一样玩转 Serverless 架构
                 </p>
-                <form action="http://localhost:3000/search" method="GET" className="relative">
+                <form onSubmit={handleSearchSubmit} className="relative">
                   <div className="form-group flex items-center mt-4">
                     <input
                       type="text"
@@ -107,8 +81,8 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-
       {/* Banner End */}
+         
 
       {/* Why Choose Start */}
 

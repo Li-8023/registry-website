@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import CardItem from "../components/card/CardItem";
 
-const ApplicationPage = () => {
+const ResourcePage = () => {
   const [data, setData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -14,6 +15,8 @@ const ApplicationPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProvider, setSelectedProvider] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     // Fetch categories and providers
@@ -53,14 +56,25 @@ const ApplicationPage = () => {
 
     fetchCategories();
     fetchProviders();
-    fetchData();
-  }, []);
+    const search = searchParams.get("search");
+    if (search) {
+      setSearchQuery(search);
+      fetchData("", "", null, search);
+    } else {
+      fetchData();
+    }
+  }, [searchParams]);
 
-  const fetchData = async (category = "", provider = "", type = null) => {
+  const fetchData = async (
+    category = "",
+    provider = "",
+    type = null,
+    search = ""
+  ) => {
     const url = new URL(
       "https://server-serverlgistry-v-awljqvnszb.cn-hangzhou.fcapp.run/v3/packages/releases"
     );
-    const params = { lang: "zh", type, category, provider };
+    const params = { lang: "zh", type, category, provider, search };
 
     Object.keys(params).forEach((key) => {
       if (params[key]) {
@@ -99,6 +113,12 @@ const ApplicationPage = () => {
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
+    fetchData(
+      selectedCategory,
+      selectedProvider,
+      searchType,
+      event.target.value
+    );
   };
 
   const handleSearchTypeChange = (event) => {
@@ -110,17 +130,17 @@ const ApplicationPage = () => {
     };
     const type = typeMap[event.target.value];
     setSearchType(type);
-    fetchData(selectedCategory, selectedProvider, type);
+    fetchData(selectedCategory, selectedProvider, type, searchQuery);
   };
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
-    fetchData(category, selectedProvider, searchType);
+    fetchData(category, selectedProvider, searchType, searchQuery);
   };
 
   const handleProviderClick = (provider) => {
     setSelectedProvider(provider);
-    fetchData(selectedCategory, provider, searchType);
+    fetchData(selectedCategory, provider, searchType, searchQuery);
   };
 
   const filteredData = Array.isArray(sortedData)
@@ -135,7 +155,7 @@ const ApplicationPage = () => {
     <div>
       <Header />
 
-       {/* Banner start */}
+      {/* Banner start */}
       <section className="breadcrumb-area">
         <div className="container">
           <div className="content">
@@ -154,7 +174,7 @@ const ApplicationPage = () => {
                 <label className="mr-4 text-white">
                   <input
                     type="radio"
-                   value="Component"
+                    value="Component"
                     checked={searchType === "1"}
                     onChange={handleSearchTypeChange}
                   />
@@ -276,4 +296,4 @@ const ApplicationPage = () => {
   );
 };
 
-export default ApplicationPage;
+export default ResourcePage;
