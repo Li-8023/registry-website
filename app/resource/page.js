@@ -134,13 +134,23 @@ const ResourcePage = () => {
   };
 
   const handleCategoryClick = (category) => {
-    setSelectedCategory(category);
-    fetchData(category, selectedProvider, searchType, searchQuery);
+    setSelectedCategory(category === "None" ? "" : category);
+    fetchData(
+      category === "None" ? "" : category,
+      selectedProvider,
+      searchType,
+      searchQuery
+    );
   };
 
   const handleProviderClick = (provider) => {
-    setSelectedProvider(provider);
-    fetchData(selectedCategory, provider, searchType, searchQuery);
+    setSelectedProvider(provider === "None" ? "" : provider);
+    fetchData(
+      selectedCategory,
+      provider === "None" ? "" : provider,
+      searchType,
+      searchQuery
+    );
   };
 
   const filteredData = Array.isArray(sortedData)
@@ -226,6 +236,14 @@ const ResourcePage = () => {
             <div className="sorting-section bg-white p-4 rounded shadow">
               <h4 className="mb-4">分类</h4>
               <div className="btn-group-vertical w-full">
+                <button
+                  className={`btn btn-outline-primary mb-2 ${
+                    selectedCategory === "" ? "bg-blue-500 text-red" : ""
+                  }`}
+                  onClick={() => handleCategoryClick("None")}
+                >
+                  无
+                </button>
                 {categories.map((category) => (
                   <button
                     key={category.id}
@@ -239,6 +257,41 @@ const ResourcePage = () => {
                     {category.name}
                   </button>
                 ))}
+              </div>
+            </div>
+
+            <div className="sorting-section bg-white p-4 rounded shadow mt-4">
+              <h4 className="mb-4">云厂商</h4>
+              <div className="btn-group-vertical w-full">
+                <button
+                  className={`btn btn-outline-primary mb-2 ${
+                    selectedProvider === "" ? "bg-blue-500 text-red" : ""
+                  }`}
+                  onClick={() => handleProviderClick("None")}
+                >
+                  无
+                </button>
+                {providers.map((provider) => (
+                  <button
+                    key={provider.id}
+                    className={`btn btn-outline-primary mb-2 ${
+                      selectedProvider === provider.name
+                        ? "bg-blue-500 text-red"
+                        : ""
+                    }`}
+                    onClick={() => handleProviderClick(provider.name)}
+                  >
+                    {provider.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Sorting Section */}
+
+            <div className="sorting-section bg-white p-4 rounded shadow">
+              <h4 className="mb-4">排序</h4>
+              <div className="btn-group-vertical w-full">
                 <button
                   className="btn btn-outline-primary mb-2"
                   onClick={() => handleSort("name")}
@@ -257,25 +310,14 @@ const ResourcePage = () => {
                 >
                   按发布时间排序
                 </button>
-              </div>
-            </div>
-
-            <div className="sorting-section bg-white p-4 rounded shadow mt-4">
-              <h4 className="mb-4">云厂商</h4>
-              <div className="btn-group-vertical w-full">
-                {providers.map((provider) => (
-                  <button
-                    key={provider.id}
-                    className={`btn btn-outline-primary mb-2 ${
-                      selectedProvider === provider.name
-                        ? "bg-blue-500 text-red"
-                        : ""
-                    }`}
-                    onClick={() => handleProviderClick(provider.name)}
-                  >
-                    {provider.name}
-                  </button>
-                ))}
+                <button
+                  className={`btn btn-outline-primary mb-2 ${
+                    selectedProvider === "" ? "bg-blue-500 text-red" : ""
+                  }`}
+                  onClick={() => handleProviderClick("None")}
+                >
+                  取消选择
+                </button>
               </div>
             </div>
           </div>
