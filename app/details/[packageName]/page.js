@@ -1,10 +1,10 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Header from "../../components/Header";
-import markdownit from "markdown-it";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faDownload } from "@fortawesome/free-solid-svg-icons";
 import Footer from "@/app/components/Footer";
+import Markdown from "markdown-to-jsx";
 
 async function fetchPackageDetail(packageName) {
   const res = await fetch(
@@ -26,7 +26,6 @@ function formatDate(dateString) {
   const options = { year: "numeric", month: "2-digit", day: "2-digit" };
   return new Date(dateString).toLocaleDateString("zh-CN", options);
 }
-
 
 const formatDateWithHyphen = (dateString) => {
   const options = { year: "numeric", month: "2-digit", day: "2-digit" };
@@ -87,7 +86,6 @@ const PackageDetailPage = async ({ params }) => {
       </section>
       {/* Banner end */}
 
-
       <div className="container mx-auto p-4">
         <div className="flex">
           {/* Left Part */}
@@ -104,6 +102,7 @@ const PackageDetailPage = async ({ params }) => {
                 readme={packageDetail.readme}
                 home={packageDetail.home}
               />
+              {/* <Markdown>{packageDetail.readme}</Markdown> */}
             </div>
           </div>
           {/* Right Part */}
@@ -150,18 +149,6 @@ const PackageDetailPage = async ({ params }) => {
 
 const ReadmeSection = ({ readme, home }) => {
   const [showContent, setShowContent] = useState("readme");
-  const [htmlContent, setHtmlContent] = useState("");
-
-  useEffect(() => {
-    if (showContent === "readme") {
-      const md = new markdownit({
-        html: true,
-        linkify: true,
-        typographer: true,
-      });
-      setHtmlContent(md.render(readme));
-    }
-  }, [showContent, readme]);
 
   const handleButtonClick = (content) => {
     setShowContent(content);
@@ -197,15 +184,13 @@ const ReadmeSection = ({ readme, home }) => {
         </button>
       </div>
       {showContent === "readme" && (
-        <div
-          className="card-text"
-          dangerouslySetInnerHTML={{ __html: htmlContent }}
-        ></div>
+        <div className="card-text">
+          <Markdown>{readme}</Markdown>
+        </div>
       )}
       {showContent === "services" && <div className="card-text">未知</div>}
     </div>
   );
 };
-
 
 export default PackageDetailPage;

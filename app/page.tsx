@@ -9,7 +9,6 @@ import '../app/style.css';
 import BlogSection from './components/main/BlogSection';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import CardItem from './components/card/CardItem';
 
 const HomePage = () => {
   const [showSearch, setShowSearch] = useState(false);

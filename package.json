@@ -18,10 +18,12 @@
     "jquery": "^3.7.1",
     "magnific-popup": "^1.2.0",
     "markdown-it": "^14.1.0",
+    "markdown-to-jsx": "^7.4.7",
     "next": "14.2.5",
     "owl.carousel": "^2.3.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-loading-indicators": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

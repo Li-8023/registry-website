@@ -63,7 +63,7 @@ const Header = () => {
                   资源
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link href="/application" className="nav-link text-white">
                     应用
                   </Link>
@@ -77,7 +77,7 @@ const Header = () => {
                   <Link href="/plugin" className="nav-link text-white">
                     插件
                   </Link>
-                </li>
+                </li> */}
                 <li>
                   <Link
                     href="https://github.com/Serverless-Devs/Serverless-Devs/blob/master/spec/zh/0.0.2/serverless_registry_model/readme.md"
