@@ -1,16 +1,17 @@
-"use client"
+"use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import "../responsive.css";
 import "../style.css";
 
-
 const Header = () => {
   const [isSticky, setIsSticky] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-
+  const router = useRouter();
+  
   const toggleSearch = () => {
     setShowSearch(!showSearch);
   };
@@ -39,6 +40,12 @@ const Header = () => {
     }
   }, [showSearch]);
 
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const keyword = event.currentTarget.elements.keyword.value;
+    router.push(`/resource?search=${keyword}`);
+  };
+
   return (
     <header
       className={`header-two navbar sticky-top sticky-header z-10 p-4 ${
@@ -60,24 +67,9 @@ const Header = () => {
                 </li>
                 <li>
                   <Link href="/resource" className="nav-link text-white">
-                  资源
+                    资源
                   </Link>
                 </li>
-                {/* <li>
-                  <Link href="/application" className="nav-link text-white">
-                    应用
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/component" className="nav-link text-white">
-                    组件
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/plugin" className="nav-link text-white">
-                    插件
-                  </Link>
-                </li> */}
                 <li>
                   <Link
                     href="https://github.com/Serverless-Devs/Serverless-Devs/blob/master/spec/zh/0.0.2/serverless_registry_model/readme.md"
@@ -115,7 +107,7 @@ const Header = () => {
                       </a>
                     </div>
                     <div className="relative">
-                      <form action="search.html" method="GET">
+                      <form onSubmit={handleSearchSubmit}>
                         <input
                           type="search"
                           placeholder="请输入要搜索的 Serverless Package 关键词"
