@@ -39,9 +39,29 @@ const formatDateWithHyphen = (dateString) => {
     .replace(/\//g, "-");
 };
 
-const PackageDetailPage = async ({ params }) => {
-  const packageDetail = await fetchPackageDetail(params.packageName);
-  const packageHistory = await fetchPackageHistory(params.packageName);
+const PackageDetailPage = ({ params }) => {
+  const [packageDetail, setPackageDetail] = useState(null);
+  const [packageHistory, setPackageHistory] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const detail = await fetchPackageDetail(params.packageName);
+      setPackageDetail(detail);
+
+      const history = await fetchPackageHistory(params.packageName);
+      setPackageHistory(history);
+    }
+
+    fetchData();
+  }, [params.packageName]);
+
+  if (!packageDetail) {
+    return (
+      <div className="container mx-auto p-4 text-center">
+        <h1 className="text-3xl font-bold mb-4">加载中...</h1>
+      </div>
+    );
+  }
 
   if (packageDetail === "未找到指定资源") {
     return (
@@ -54,7 +74,6 @@ const PackageDetailPage = async ({ params }) => {
   return (
     <div>
       <Header />
-      {/* Banner start */}
       <section className="breadcrumb-area">
         <div className="container">
           <div className="content">
@@ -70,7 +89,12 @@ const PackageDetailPage = async ({ params }) => {
                 </div>
               </div>
               <div>
-                <button className="btn btn-outline-primary text-white border border-primary">
+                <button
+                  className="btn btn-outline-primary text-white border border-primary"
+                  onClick={() =>
+                    window.open(packageDetail.zipball_url, "_blank")
+                  }
+                >
                   <FontAwesomeIcon icon={faDownload} /> 下载
                 </button>
               </div>
@@ -84,45 +108,30 @@ const PackageDetailPage = async ({ params }) => {
           </div>
         </div>
       </section>
-      {/* Banner end */}
 
       <div className="container mx-auto p-4">
         <div className="flex">
-          {/* Left Part */}
           <div className="w-7/12 p-4">
-            {/* Upper Part */}
             <div className="card mb-4 p-4">
-              {/* <h2 className="card-title text-2xl font-bold mb-4">描述</h2> */}
               <p className="card-text">{packageDetail.description}</p>
             </div>
-            {/* Below Part */}
             <div className="card p-4">
-              {/* <h2 className="card-title text-2xl font-bold mb-4">Readme</h2> */}
               <ReadmeSection
                 readme={packageDetail.readme}
                 home={packageDetail.home}
               />
-              {/* <Markdown>{packageDetail.readme}</Markdown> */}
             </div>
           </div>
-          {/* Right Part */}
           <div className="w-5/12 p-4">
-            {/* Provider */}
             <div className="card mb-4 p-4">
-              {/* <h2 className="card-title text-xl font-bold mb-2">厂商支持</h2> */}
               <p className="card-text">
                 厂商支持：{packageDetail.provider.join(", ")}
               </p>
             </div>
-            {/* Created At and Tag Name */}
             <div className="card mb-4 p-4">
-              {/* <h2 className="card-title text-xl font-bold mb-2">
-                Created At and Tag Name
-              </h2> */}
               <p className="card-text">更新时间: {packageDetail.created_at}</p>
               <p className="card-text">更新版本: {packageDetail.tag_name}</p>
             </div>
-            {/* History Versions */}
             <div className="card mb-4 p-4">
               <h2 className="card-title text-xl font-bold mb-2">历史版本</h2>
               <ul className="list-group">
@@ -133,7 +142,6 @@ const PackageDetailPage = async ({ params }) => {
                 ))}
               </ul>
             </div>
-            {/* Tags */}
             <div className="card p-4">
               <h2 className="card-title text-xl font-bold mb-2">标签</h2>
               <p className="card-text">{packageDetail.tags.join(", ")}</p>
