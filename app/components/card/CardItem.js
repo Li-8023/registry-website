@@ -25,7 +25,7 @@ const CardItem = ({ item }) => {
 
   return (
     <div
-      className="col-xl-6 wow fadeInUp mb-4"
+      className="wow fadeInUp mb-4"
       data-wow-delay={`${item.delayTime}s`}
       style={{
         visibility: "visible",
@@ -34,22 +34,27 @@ const CardItem = ({ item }) => {
       }}
     >
       <div
-        className="themes-box shadow-lg rounded-2xl overflow-hidden"
-        style={{ overflow: "hidden" }}
+        className="themes-box shadow-lg rounded-xl overflow-hidden"
+        style={{
+          overflow: "hidden",
+          width: "100%", // Full width of the card
+          maxWidth: "250px", // Maximum width for the card
+          margin: "0 auto", 
+        }}
       >
-        <div className="main-content p-4">
-          <h5 className="flex justify-between items-center">
+        <div className="main-content p-3">
+          <h5 className="flex justify-between items-center text-sm">
             <Link href={`/details/${item.name}`}>
-              {splitMaxLength(item.name, 27)}
+              {splitMaxLength(item.name, 20)}
             </Link>
-            <span className="flex items-center text-orange-500">
+            <span className="flex items-center text-orange-500 text-sm">
               <FontAwesomeIcon icon={faFire} className="mr-1" />
               {item.download}
             </span>
           </h5>
-          <div className="last-part mt-8">
+          <div className="last-part mt-4">
             <div className="right" style={{ width: "100%" }}>
-              <p className="text" style={{ width: "100%" }}>
+              <p className="text text-sm" style={{ width: "100%" }}>
                 {item.latest_create && (
                   <>
                     <FontAwesomeIcon icon={faCalendar} />{" "}
@@ -66,20 +71,25 @@ const CardItem = ({ item }) => {
                 )}
               </p>
               <p
-                className="text-flow-ellipsis-multiple mt-2"
-                style={{ height: "70px" }}
+                className="text-flow-ellipsis-multiple mt-2 text-xs"
+                style={{ height: "50px" }}
               >
                 {item.description}
               </p>
             </div>
           </div>
-          <div className="past-part mt-4 ml-7">
+          <div className="past-part mt-4">
             <center>
-              <div className="button flex space-x-10">
+              <div className="button flex space-x-4">
                 <Link href={`/details/${item.name}`}>
                   <button
                     className="preButton btn btn-outline-primary"
-                    style={{ backgroundColor: "#6676fa", color: "white" }}
+                    style={{
+                      backgroundColor: "#6676fa",
+                      color: "white",
+                      fontSize: "0.8rem",
+                      padding: "5px 10px",
+                    }}
                   >
                     <FontAwesomeIcon icon={faBook} /> 查看详情
                   </button>
@@ -89,14 +99,22 @@ const CardItem = ({ item }) => {
                     href={item.zipball_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="download btn btn-outline-secondary ml-2"
+                    className="download btn btn-outline-secondary"
+                    style={{
+                      fontSize: "0.8rem",
+                      padding: "5px 10px",
+                    }}
                   >
                     <FontAwesomeIcon icon={faDownload} /> 下载组件
                   </a>
                 ) : (
                   <button
                     onClick={() => downloadPlugin(item.name)}
-                    className="download btn btn-outline-secondary ml-2"
+                    className="download btn btn-outline-secondary"
+                    style={{
+                      fontSize: "0.8rem",
+                      padding: "5px 10px",
+                    }}
                   >
                     <FontAwesomeIcon icon={faDownload} /> 下载组件
                   </button>

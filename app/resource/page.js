@@ -17,7 +17,8 @@ import DraftsIcon from "@mui/icons-material/Drafts";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import SendIcon from "@mui/icons-material/Send";
-import StarBorder from "@mui/icons-material/StarBorder";
+import Checkbox from "@mui/material/Checkbox";
+import Box from "@mui/material/Box";
 
 const ResourcePage = () => {
   const [data, setData] = useState([]);
@@ -28,6 +29,7 @@ const ResourcePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProvider, setSelectedProvider] = useState("");
+  const [selectedSort, setSelectedSort] = useState(null);
   const [openCategories, setOpenCategories] = useState(false);
   const [openProviders, setOpenProviders] = useState(false);
   const [openSort, setOpenSort] = useState(false);
@@ -35,7 +37,6 @@ const ResourcePage = () => {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    // Fetch categories and providers
     const fetchCategories = async () => {
       try {
         const response = await fetch(
@@ -112,6 +113,7 @@ const ResourcePage = () => {
   }, [data]);
 
   const handleSort = (criteria) => {
+    setSelectedSort(criteria);
     const sorted = [...data].sort((a, b) => {
       if (criteria === "name") {
         return a.name.localeCompare(b.name);
@@ -211,98 +213,110 @@ const ResourcePage = () => {
       <section className="main-content-section">
         <div className="container mx-auto flex flex-wrap py-12">
           {/* Left Section */}
-          <div className="w-full md:w-5/12 lg:w-4/12 pr-4">
-            <List
-              sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
-              component="nav"
-              aria-labelledby="nested-list-subheader"
-              subheader={
-                <ListSubheader component="div" id="nested-list-subheader">
-                  筛选
-                </ListSubheader>
-              }
-            >
-              {/* Categories */}
-              <ListItemButton onClick={toggleCategories}>
-                <ListItemIcon>
-                  <InboxIcon />
-                </ListItemIcon>
-                <ListItemText primary="Categories" />
-                {openCategories ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-              <Collapse in={openCategories} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {categories.map((category) => (
-                    <ListItemButton
-                      sx={{ pl: 4 }}
-                      key={category.id}
-                      onClick={() => handleCategoryClick(category.name)}
-                    >
-                      <ListItemText primary={category.name} />
-                    </ListItemButton>
-                  ))}
+          <Box
+            sx={{
+              width: "100%",
+              maxWidth: 250,
+              bgcolor: "background.paper",
+              overflowY: "auto",
+              maxHeight: 600,
+              marginRight: 5,
+            }}
+            component="nav"
+            aria-labelledby="nested-list-subheader"
+          >
+            <ListSubheader component="div" id="nested-list-subheader">
+              筛选
+            </ListSubheader>
 
-                </List>
-              </Collapse>
-
-              {/* Providers */}
-              <ListItemButton onClick={toggleProviders}>
-                <ListItemIcon>
-                  <DraftsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Providers" />
-                {openProviders ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-              <Collapse in={openProviders} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  {providers.map((provider) => (
-                    <ListItemButton
-                      sx={{ pl: 4 }}
-                      key={provider.id}
-                      onClick={() => handleProviderClick(provider.name)}
-                    >
-                      <ListItemText primary={provider.name} />
-                    </ListItemButton>
-                  ))}
-                </List>
-              </Collapse>
-
-              {/* Sort */}
-              <ListItemButton onClick={toggleSort}>
-                <ListItemIcon>
-                  <SendIcon />
-                </ListItemIcon>
-                <ListItemText primary="Sort" />
-                {openSort ? <ExpandLess /> : <ExpandMore />}
-              </ListItemButton>
-              <Collapse in={openSort} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
+            {/* Categories */}
+            <ListItemButton onClick={toggleCategories}>
+              <ListItemIcon>
+                <InboxIcon />
+              </ListItemIcon>
+              <ListItemText primary="Categories" />
+              {openCategories ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={openCategories} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {categories.map((category) => (
                   <ListItemButton
                     sx={{ pl: 4 }}
-                    onClick={() => handleSort("name")}
+                    key={category.id}
+                    onClick={() => handleCategoryClick(category.name)}
                   >
-                    <ListItemText primary="按名称排序" />
+                    <Checkbox
+                      checked={selectedCategory === category.name}
+                      onChange={() => handleCategoryClick(category.name)}
+                    />
+                    <ListItemText primary={category.name} />
                   </ListItemButton>
+                ))}
+              </List>
+            </Collapse>
+
+            {/* Providers */}
+            <ListItemButton onClick={toggleProviders}>
+              <ListItemIcon>
+                <DraftsIcon />
+              </ListItemIcon>
+              <ListItemText primary="Providers" />
+              {openProviders ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={openProviders} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {providers.map((provider) => (
                   <ListItemButton
                     sx={{ pl: 4 }}
-                    onClick={() => handleSort("download")}
+                    key={provider.id}
+                    onClick={() => handleProviderClick(provider.name)}
                   >
-                    <ListItemText primary="按下载量排序" />
+                    <Checkbox
+                      checked={selectedProvider === provider.name}
+                      onChange={() => handleProviderClick(provider.name)}
+                    />
+                    <ListItemText primary={provider.name} />
                   </ListItemButton>
+                ))}
+              </List>
+            </Collapse>
+
+            {/* Sort */}
+            <ListItemButton onClick={toggleSort}>
+              <ListItemIcon>
+                <SendIcon />
+              </ListItemIcon>
+              <ListItemText primary="Sort" />
+              {openSort ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={openSort} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {["name", "download", "date"].map((criteria) => (
                   <ListItemButton
                     sx={{ pl: 4 }}
-                    onClick={() => handleSort("date")}
+                    key={criteria}
+                    onClick={() => handleSort(criteria)}
                   >
-                    <ListItemText primary="按发布时间排序" />
+                    <Checkbox
+                      checked={selectedSort === criteria}
+                      onChange={() => handleSort(criteria)}
+                    />
+                    <ListItemText primary={`按${criteria}排序`} />
                   </ListItemButton>
-                </List>
-              </Collapse>
-            </List>
-          </div>
+                ))}
+              </List>
+            </Collapse>
+          </Box>
 
           {/* Right Section  */}
           <div className="w-full md:w-7/12 lg:w-8/12">
-            <div className="row">
+            <div
+              className="grid"
+              style={{
+                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: "30px", 
+              }}
+            >
               {sortedData.map((item, index) => (
                 <CardItem key={index} item={item} />
               ))}
@@ -317,6 +331,7 @@ const ResourcePage = () => {
 };
 
 export default ResourcePage;
+
 
 
 
