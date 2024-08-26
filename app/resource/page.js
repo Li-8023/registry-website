@@ -6,6 +6,19 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import CardItem from "../components/card/CardItem";
 
+import ListSubheader from "@mui/material/ListSubheader";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Collapse from "@mui/material/Collapse";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import DraftsIcon from "@mui/icons-material/Drafts";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import SendIcon from "@mui/icons-material/Send";
+import StarBorder from "@mui/icons-material/StarBorder";
+
 const ResourcePage = () => {
   const [data, setData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
@@ -15,6 +28,9 @@ const ResourcePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProvider, setSelectedProvider] = useState("");
+  const [openCategories, setOpenCategories] = useState(false);
+  const [openProviders, setOpenProviders] = useState(false);
+  const [openSort, setOpenSort] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -153,13 +169,17 @@ const ResourcePage = () => {
     );
   };
 
-  const filteredData = Array.isArray(sortedData)
-    ? sortedData.filter(
-        (item) =>
-          item.name.includes(searchQuery) ||
-          item.description.includes(searchQuery)
-      )
-    : [];
+  const toggleCategories = () => {
+    setOpenCategories(!openCategories);
+  };
+
+  const toggleProviders = () => {
+    setOpenProviders(!openProviders);
+  };
+
+  const toggleSort = () => {
+    setOpenSort(!openSort);
+  };
 
   return (
     <div>
@@ -169,54 +189,13 @@ const ResourcePage = () => {
       <section className="breadcrumb-area">
         <div className="container">
           <div className="content">
-            <h2 className="breadd wow fadeInUp">搜索 </h2>
-            <div className="search-section">
-              <div className="radio-buttons flex justify-center mb-2">
-                <label className="mr-4 text-white">
-                  <input
-                    type="radio"
-                    value="Project"
-                    checked={searchType === "3"}
-                    onChange={handleSearchTypeChange}
-                  />
-                  应用
-                </label>
-                <label className="mr-4 text-white">
-                  <input
-                    type="radio"
-                    value="Component"
-                    checked={searchType === "1"}
-                    onChange={handleSearchTypeChange}
-                  />
-                  组件
-                </label>
-                <label className="mr-4 text-white">
-                  <input
-                    type="radio"
-                    value="Plugin"
-                    checked={searchType === "2"}
-                    onChange={handleSearchTypeChange}
-                  />
-                  插件
-                </label>
-                <label className="mr-4 text-white">
-                  <input
-                    type="radio"
-                    value="None"
-                    checked={searchType === ""}
-                    onChange={handleSearchTypeChange}
-                  />
-                  无
-                </label>
-              </div>
-              <input
-                type="text"
-                placeholder="搜索..."
-                value={searchQuery}
-                onChange={handleSearch}
-                className="search-input w-full p-2 border rounded"
-              />
-            </div>
+            <input
+              type="text"
+              placeholder="搜索..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="search-input w-full p-2 border rounded"
+            />
             <ul className="breadcrumb-list wow fadeInUp mt-4">
               <li>
                 <a href="/">首页 /</a>
@@ -231,9 +210,119 @@ const ResourcePage = () => {
       {/* Main Content Section */}
       <section className="main-content-section">
         <div className="container mx-auto flex flex-wrap py-12">
-          {/* Right Section (now moved to left) */}
+          {/* Left Section */}
           <div className="w-full md:w-5/12 lg:w-4/12 pr-4">
-            <div className="sorting-section bg-white p-4 rounded shadow">
+            <List
+              sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}
+              component="nav"
+              aria-labelledby="nested-list-subheader"
+              subheader={
+                <ListSubheader component="div" id="nested-list-subheader">
+                  筛选
+                </ListSubheader>
+              }
+            >
+              {/* Categories */}
+              <ListItemButton onClick={toggleCategories}>
+                <ListItemIcon>
+                  <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary="Categories" />
+                {openCategories ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+              <Collapse in={openCategories} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  {categories.map((category) => (
+                    <ListItemButton
+                      sx={{ pl: 4 }}
+                      key={category.id}
+                      onClick={() => handleCategoryClick(category.name)}
+                    >
+                      <ListItemText primary={category.name} />
+                    </ListItemButton>
+                  ))}
+
+                </List>
+              </Collapse>
+
+              {/* Providers */}
+              <ListItemButton onClick={toggleProviders}>
+                <ListItemIcon>
+                  <DraftsIcon />
+                </ListItemIcon>
+                <ListItemText primary="Providers" />
+                {openProviders ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+              <Collapse in={openProviders} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  {providers.map((provider) => (
+                    <ListItemButton
+                      sx={{ pl: 4 }}
+                      key={provider.id}
+                      onClick={() => handleProviderClick(provider.name)}
+                    >
+                      <ListItemText primary={provider.name} />
+                    </ListItemButton>
+                  ))}
+                </List>
+              </Collapse>
+
+              {/* Sort */}
+              <ListItemButton onClick={toggleSort}>
+                <ListItemIcon>
+                  <SendIcon />
+                </ListItemIcon>
+                <ListItemText primary="Sort" />
+                {openSort ? <ExpandLess /> : <ExpandMore />}
+              </ListItemButton>
+              <Collapse in={openSort} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItemButton
+                    sx={{ pl: 4 }}
+                    onClick={() => handleSort("name")}
+                  >
+                    <ListItemText primary="按名称排序" />
+                  </ListItemButton>
+                  <ListItemButton
+                    sx={{ pl: 4 }}
+                    onClick={() => handleSort("download")}
+                  >
+                    <ListItemText primary="按下载量排序" />
+                  </ListItemButton>
+                  <ListItemButton
+                    sx={{ pl: 4 }}
+                    onClick={() => handleSort("date")}
+                  >
+                    <ListItemText primary="按发布时间排序" />
+                  </ListItemButton>
+                </List>
+              </Collapse>
+            </List>
+          </div>
+
+          {/* Right Section  */}
+          <div className="w-full md:w-7/12 lg:w-8/12">
+            <div className="row">
+              {sortedData.map((item, index) => (
+                <CardItem key={index} item={item} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default ResourcePage;
+
+
+
+
+{
+  /* <div className="sorting-section bg-white p-4 rounded shadow">
               <h4 className="mb-4">分类</h4>
               <div className="btn-group-vertical w-full">
                 <button
@@ -258,9 +347,11 @@ const ResourcePage = () => {
                   </button>
                 ))}
               </div>
-            </div>
+            </div> */
+}
 
-            <div className="sorting-section bg-white p-4 rounded shadow mt-4">
+{
+  /* <div className="sorting-section bg-white p-4 rounded shadow mt-4">
               <h4 className="mb-4">云厂商</h4>
               <div className="btn-group-vertical w-full">
                 <button
@@ -285,11 +376,15 @@ const ResourcePage = () => {
                   </button>
                 ))}
               </div>
-            </div>
+            </div> */
+}
 
-            {/* Sorting Section */}
+{
+  /* Sorting Section */
+}
 
-            <div className="sorting-section bg-white p-4 rounded shadow">
+{
+  /* <div className="sorting-section bg-white p-4 rounded shadow">
               <h4 className="mb-4">排序</h4>
               <div className="btn-group-vertical w-full">
                 <button
@@ -319,23 +414,5 @@ const ResourcePage = () => {
                   取消选择
                 </button>
               </div>
-            </div>
-          </div>
-
-          {/* Left Section (now moved to right) */}
-          <div className="w-full md:w-7/12 lg:w-8/12">
-            <div className="row">
-              {filteredData.map((item, index) => (
-                <CardItem key={index} item={item} />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-    </div>
-  );
-};
-
-export default ResourcePage;
+            </div> */
+}
