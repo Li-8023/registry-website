@@ -19,13 +19,16 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import SendIcon from "@mui/icons-material/Send";
 import Checkbox from "@mui/material/Checkbox";
 import Box from "@mui/material/Box";
-
+import CategoryIcon from '@mui/icons-material/Category';
+import CloudCircleIcon from '@mui/icons-material/CloudCircle';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import LoadingPopup from '../components/LoadingPopup'
 const ResourcePage = () => {
   const [data, setData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [categories, setCategories] = useState([]);
   const [providers, setProviders] = useState([]);
-  const [searchType, setSearchType] = useState(null); // Default to null
+  const [searchType, setSearchType] = useState(null); 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProvider, setSelectedProvider] = useState("");
@@ -33,6 +36,8 @@ const ResourcePage = () => {
   const [openCategories, setOpenCategories] = useState(false);
   const [openProviders, setOpenProviders] = useState(false);
   const [openSort, setOpenSort] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -88,6 +93,7 @@ const ResourcePage = () => {
     type = null,
     search = ""
   ) => {
+    setLoading(true);
     const url = new URL(
       "https://server-serverlgistry-v-awljqvnszb.cn-hangzhou.fcapp.run/v3/packages/releases"
     );
@@ -106,6 +112,7 @@ const ResourcePage = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -113,20 +120,22 @@ const ResourcePage = () => {
   }, [data]);
 
   const handleSort = (criteria) => {
+     setLoading(true);
     setSelectedSort(criteria);
     const sorted = [...data].sort((a, b) => {
-      if (criteria === "name") {
+      if (criteria === "名称") {
         return a.name.localeCompare(b.name);
       }
-      if (criteria === "download") {
+      if (criteria === "下载") {
         return b.download - a.download;
       }
-      if (criteria === "date") {
+      if (criteria === "日期") {
         return new Date(b.latest_create) - new Date(a.latest_create);
       }
       return 0;
     });
     setSortedData(sorted);
+    setLoading(false);
   };
 
   const handleSearch = (event) => {
@@ -186,6 +195,7 @@ const ResourcePage = () => {
   return (
     <div>
       <Header />
+      {loading && <LoadingPopup />}
 
       {/* Banner start */}
       <section className="breadcrumb-area">
@@ -232,13 +242,23 @@ const ResourcePage = () => {
             {/* Categories */}
             <ListItemButton onClick={toggleCategories}>
               <ListItemIcon>
-                <InboxIcon />
+                <CategoryIcon />
               </ListItemIcon>
-              <ListItemText primary="Categories" />
+              <ListItemText primary="分类" />
               {openCategories ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openCategories} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
+                <ListItemButton
+                  sx={{ pl: 4 }}
+                  onClick={() => handleCategoryClick("None")}
+                >
+                  <Checkbox
+                    checked={selectedCategory === ""}
+                    onChange={() => handleCategoryClick("None")}
+                  />
+                  <ListItemText primary={"全部"} />
+                </ListItemButton>
                 {categories.map((category) => (
                   <ListItemButton
                     sx={{ pl: 4 }}
@@ -258,13 +278,23 @@ const ResourcePage = () => {
             {/* Providers */}
             <ListItemButton onClick={toggleProviders}>
               <ListItemIcon>
-                <DraftsIcon />
+                <CloudCircleIcon />
               </ListItemIcon>
-              <ListItemText primary="Providers" />
+              <ListItemText primary="云厂商" />
               {openProviders ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openProviders} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
+                <ListItemButton
+                  sx={{ pl: 4 }}
+                  onClick={() => handleProviderClick("None")}
+                >
+                  <Checkbox
+                    checked={selectedProvider === ""}
+                    onChange={() => handleProviderClick("None")}
+                  />
+                  <ListItemText primary={"全部"} />
+                </ListItemButton>
                 {providers.map((provider) => (
                   <ListItemButton
                     sx={{ pl: 4 }}
@@ -284,14 +314,14 @@ const ResourcePage = () => {
             {/* Sort */}
             <ListItemButton onClick={toggleSort}>
               <ListItemIcon>
-                <SendIcon />
+                <FilterListIcon />
               </ListItemIcon>
-              <ListItemText primary="Sort" />
+              <ListItemText primary="分类" />
               {openSort ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openSort} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                {["name", "download", "date"].map((criteria) => (
+                {["名称", "下载", "日期"].map((criteria) => (
                   <ListItemButton
                     sx={{ pl: 4 }}
                     key={criteria}
@@ -309,12 +339,12 @@ const ResourcePage = () => {
           </Box>
 
           {/* Right Section  */}
-          <div className="w-full md:w-7/12 lg:w-8/12">
+          <div className="w-full md:w-7/12 lg:w-9/12">
             <div
               className="grid"
               style={{
-                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                gap: "30px", 
+                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                gap: "30px",
               }}
             >
               {sortedData.map((item, index) => (

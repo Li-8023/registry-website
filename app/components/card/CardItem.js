@@ -37,22 +37,22 @@ const CardItem = ({ item }) => {
         className="themes-box shadow-lg rounded-xl overflow-hidden"
         style={{
           overflow: "hidden",
-          width: "100%", // Full width of the card
-          maxWidth: "250px", // Maximum width for the card
+          width: "100%", 
+          maxWidth: "350px", 
           margin: "0 auto", 
         }}
       >
         <div className="main-content p-3">
           <h5 className="flex justify-between items-center text-sm">
             <Link href={`/details/${item.name}`}>
-              {splitMaxLength(item.name, 20)}
+              {splitMaxLength(item.name, 30)}
             </Link>
             <span className="flex items-center text-orange-500 text-sm">
               <FontAwesomeIcon icon={faFire} className="mr-1" />
               {item.download}
             </span>
           </h5>
-          <div className="last-part mt-4">
+          <div className="last-part mt-2">
             <div className="right" style={{ width: "100%" }}>
               <p className="text text-sm" style={{ width: "100%" }}>
                 {item.latest_create && (
@@ -78,7 +78,7 @@ const CardItem = ({ item }) => {
               </p>
             </div>
           </div>
-          <div className="past-part mt-4">
+          <div className="past-part mt-2">
             <center>
               <div className="button flex space-x-4">
                 <Link href={`/details/${item.name}`}>
