@@ -148,7 +148,7 @@ const HomePage = () => {
       {/* Why Choose End */}
 
       {/* Featured Start */}
-      <section className="feature item three py-12">
+      {/* <section className="feature item three py-12">
       <div className="container mx-auto">
         <div className="flex flex-wrap justify-between items-center">
           <div className="lg:w-5/12 md:w-6/12 wow fadeInUp" data-wow-delay="0.3s">
@@ -168,7 +168,7 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-    </section>
+    </section> */}
 
       {/* <section className="feature item three py-12">
         <div className="container mx-auto">

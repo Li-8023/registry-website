@@ -33,6 +33,7 @@ const ResourcePage = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProvider, setSelectedProvider] = useState("");
   const [selectedSort, setSelectedSort] = useState(null);
+  const [selectedType, setSelectedType] = useState(null);
   const [openCategories, setOpenCategories] = useState(false);
   const [openProviders, setOpenProviders] = useState(false);
   const [openSort, setOpenSort] = useState(false);
@@ -148,17 +149,23 @@ const ResourcePage = () => {
     );
   };
 
-  const handleSearchTypeChange = (event) => {
-    const typeMap = {
-      Component: "1",
-      Plugin: "2",
-      Project: "3",
-      None: "",
-    };
-    const type = typeMap[event.target.value];
-    setSearchType(type);
+  const handleSearchTypeChange = (criteria) => {
+    let type = "";
+
+    if (criteria === "全部") {
+      type = "";
+    } else if (criteria === "组件") {
+      type = "Component";
+    } else if (criteria === "插件") {
+      type = "Plugin";
+    } else if (criteria === "应用") {
+      type = "Project";
+    }
+
+    setSelectedType(type);
     fetchData(selectedCategory, selectedProvider, type, searchQuery);
   };
+
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category === "None" ? "" : category);
@@ -236,8 +243,49 @@ const ResourcePage = () => {
             aria-labelledby="nested-list-subheader"
           >
             <ListSubheader component="div" id="nested-list-subheader">
-              筛选
+              类型
             </ListSubheader>
+
+            {/* Sort Types */}
+            {/* Sort Types */}
+            <ListItemButton onClick={toggleSort}>
+              <ListItemIcon>
+                <FilterListIcon />
+              </ListItemIcon>
+              <ListItemText primary="类别" />
+              {openSort ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={openSort} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItemButton
+                  sx={{ pl: 4 }}
+                  onClick={() => handleSearchTypeChange("全部")}
+                >
+                  <Checkbox
+                    checked={selectedType === ""}
+                    onChange={() => handleSearchTypeChange("全部")}
+                  />
+                  <ListItemText primary={"全部"} />
+                </ListItemButton>
+                {["组件", "插件", "应用"].map((type) => (
+                  <ListItemButton
+                    sx={{ pl: 4 }}
+                    key={type}
+                    onClick={() => handleSearchTypeChange(type)}
+                  >
+                    <Checkbox
+                      checked={
+                        (type === "组件" && selectedType === "Component") ||
+                        (type === "插件" && selectedType === "Plugin") ||
+                        (type === "应用" && selectedType === "Project")
+                      }
+                      onChange={() => handleSearchTypeChange(type)}
+                    />
+                    <ListItemText primary={type} />
+                  </ListItemButton>
+                ))}
+              </List>
+            </Collapse>
 
             {/* Categories */}
             <ListItemButton onClick={toggleCategories}>
@@ -316,7 +364,7 @@ const ResourcePage = () => {
               <ListItemIcon>
                 <FilterListIcon />
               </ListItemIcon>
-              <ListItemText primary="分类" />
+              <ListItemText primary="排序" />
               {openSort ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={openSort} timeout="auto" unmountOnExit>
