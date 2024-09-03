@@ -12,31 +12,32 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import DraftsIcon from "@mui/icons-material/Drafts";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-import SendIcon from "@mui/icons-material/Send";
+import ExtensionIcon from "@mui/icons-material/Extension";
 import Checkbox from "@mui/material/Checkbox";
 import Box from "@mui/material/Box";
 import CategoryIcon from '@mui/icons-material/Category';
 import CloudCircleIcon from '@mui/icons-material/CloudCircle';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import LoadingPopup from '../components/LoadingPopup'
+
+
 const ResourcePage = () => {
   const [data, setData] = useState([]);
   const [sortedData, setSortedData] = useState([]);
   const [categories, setCategories] = useState([]);
   const [providers, setProviders] = useState([]);
-  const [searchType, setSearchType] = useState(null); 
+  const [searchType, setSearchType] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedProvider, setSelectedProvider] = useState("");
   const [selectedSort, setSelectedSort] = useState(null);
-  const [selectedType, setSelectedType] = useState(null);
+  const [selectedType, setSelectedType] = useState("");
   const [openCategories, setOpenCategories] = useState(false);
   const [openProviders, setOpenProviders] = useState(false);
   const [openSort, setOpenSort] = useState(false);
+  const [openTypes, setOpenTypes] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -121,7 +122,7 @@ const ResourcePage = () => {
   }, [data]);
 
   const handleSort = (criteria) => {
-     setLoading(true);
+    setLoading(true);
     setSelectedSort(criteria);
     const sorted = [...data].sort((a, b) => {
       if (criteria === "名称") {
@@ -149,24 +150,6 @@ const ResourcePage = () => {
     );
   };
 
-  const handleSearchTypeChange = (criteria) => {
-    let type = "";
-
-    if (criteria === "全部") {
-      type = "";
-    } else if (criteria === "组件") {
-      type = "Component";
-    } else if (criteria === "插件") {
-      type = "Plugin";
-    } else if (criteria === "应用") {
-      type = "Project";
-    }
-
-    setSelectedType(type);
-    fetchData(selectedCategory, selectedProvider, type, searchQuery);
-  };
-
-
   const handleCategoryClick = (category) => {
     setSelectedCategory(category === "None" ? "" : category);
     fetchData(
@@ -187,6 +170,19 @@ const ResourcePage = () => {
     );
   };
 
+const handleTypeClick = (type) => {
+  const typeMap = {
+    "1": "1",
+    "2": "2",
+    "3": "3",
+  };
+
+  const selectedTypeValue = typeMap[type] || type; // Using type directly if not found in typeMap
+  setSelectedType(selectedTypeValue);
+  fetchData(selectedCategory, selectedProvider, selectedTypeValue, searchQuery);
+  console.log("Selected Type:", selectedTypeValue); // Debugging: Check the selected type value
+};
+
   const toggleCategories = () => {
     setOpenCategories(!openCategories);
   };
@@ -197,6 +193,10 @@ const ResourcePage = () => {
 
   const toggleSort = () => {
     setOpenSort(!openSort);
+  };
+
+  const toggleTypes = () => {
+    setOpenTypes(!openTypes);
   };
 
   return (
@@ -243,45 +243,44 @@ const ResourcePage = () => {
             aria-labelledby="nested-list-subheader"
           >
             <ListSubheader component="div" id="nested-list-subheader">
-              类型
+              筛选
             </ListSubheader>
 
-            {/* Sort Types */}
-            {/* Sort Types */}
-            <ListItemButton onClick={toggleSort}>
+            {/* Types */}
+            <ListItemButton onClick={toggleTypes}>
               <ListItemIcon>
-                <FilterListIcon />
+                <ExtensionIcon />
               </ListItemIcon>
               <ListItemText primary="类别" />
-              {openSort ? <ExpandLess /> : <ExpandMore />}
+              {openTypes ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
-            <Collapse in={openSort} timeout="auto" unmountOnExit>
+            <Collapse in={openTypes} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                <ListItemButton
+                {/* <ListItemButton
                   sx={{ pl: 4 }}
-                  onClick={() => handleSearchTypeChange("全部")}
+                  onClick={() => handleTypeClick("None")}
                 >
                   <Checkbox
                     checked={selectedType === ""}
-                    onChange={() => handleSearchTypeChange("全部")}
+                    onChange={() => handleTypeClick("None")}
                   />
                   <ListItemText primary={"全部"} />
-                </ListItemButton>
-                {["组件", "插件", "应用"].map((type) => (
+                </ListItemButton> */}
+                {[
+                  { type: "1", label: "组件" },
+                  { type: "2", label: "插件" },
+                  { type: "3", label: "应用" },
+                ].map((option) => (
                   <ListItemButton
                     sx={{ pl: 4 }}
-                    key={type}
-                    onClick={() => handleSearchTypeChange(type)}
+                    key={option.type}
+                    onClick={() => handleTypeClick(option.type)}
                   >
                     <Checkbox
-                      checked={
-                        (type === "组件" && selectedType === "Component") ||
-                        (type === "插件" && selectedType === "Plugin") ||
-                        (type === "应用" && selectedType === "Project")
-                      }
-                      onChange={() => handleSearchTypeChange(type)}
+                      checked={selectedType === option.type}
+                      onChange={() => handleTypeClick(option.type)}
                     />
-                    <ListItemText primary={type} />
+                    <ListItemText primary={option.label} />
                   </ListItemButton>
                 ))}
               </List>
@@ -323,6 +322,32 @@ const ResourcePage = () => {
               </List>
             </Collapse>
 
+            {/* Sort */}
+            <ListItemButton onClick={toggleSort}>
+              <ListItemIcon>
+                <FilterListIcon />
+              </ListItemIcon>
+              <ListItemText primary="排序" />
+              {openSort ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={openSort} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {["名称", "下载", "日期"].map((criteria) => (
+                  <ListItemButton
+                    sx={{ pl: 4 }}
+                    key={criteria}
+                    onClick={() => handleSort(criteria)}
+                  >
+                    <Checkbox
+                      checked={selectedSort === criteria}
+                      onChange={() => handleSort(criteria)}
+                    />
+                    <ListItemText primary={`按${criteria}排序`} />
+                  </ListItemButton>
+                ))}
+              </List>
+            </Collapse>
+
             {/* Providers */}
             <ListItemButton onClick={toggleProviders}>
               <ListItemIcon>
@@ -359,31 +384,7 @@ const ResourcePage = () => {
               </List>
             </Collapse>
 
-            {/* Sort */}
-            <ListItemButton onClick={toggleSort}>
-              <ListItemIcon>
-                <FilterListIcon />
-              </ListItemIcon>
-              <ListItemText primary="排序" />
-              {openSort ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={openSort} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                {["名称", "下载", "日期"].map((criteria) => (
-                  <ListItemButton
-                    sx={{ pl: 4 }}
-                    key={criteria}
-                    onClick={() => handleSort(criteria)}
-                  >
-                    <Checkbox
-                      checked={selectedSort === criteria}
-                      onChange={() => handleSort(criteria)}
-                    />
-                    <ListItemText primary={`按${criteria}排序`} />
-                  </ListItemButton>
-                ))}
-              </List>
-            </Collapse>
+            
           </Box>
 
           {/* Right Section  */}

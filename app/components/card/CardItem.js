@@ -37,9 +37,9 @@ const CardItem = ({ item }) => {
         className="themes-box shadow-lg rounded-xl overflow-hidden"
         style={{
           overflow: "hidden",
-          width: "100%", 
-          maxWidth: "350px", 
-          margin: "0 auto", 
+          width: "100%",
+          maxWidth: "350px",
+          margin: "0 auto",
         }}
       >
         <div className="main-content p-3">
@@ -55,10 +55,14 @@ const CardItem = ({ item }) => {
           <div className="last-part mt-2">
             <div className="right" style={{ width: "100%" }}>
               <p className="text text-sm" style={{ width: "100%" }}>
-                {item.latest_create && (
+                {item.latest_create && item.latest_create !== "No record" ? (
                   <>
                     <FontAwesomeIcon icon={faCalendar} />{" "}
                     {formatDate(item.latest_create)}
+                  </>
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faCalendar} /> xxxx/xx/xx
                   </>
                 )}
                 {item.latest_create && item.version && (
@@ -72,9 +76,20 @@ const CardItem = ({ item }) => {
               </p>
               <p
                 className="text-flow-ellipsis-multiple mt-2 text-xs"
-                style={{ height: "50px" }}
+                style={{ height: "50px", color: "darkgray" }}
               >
-                {item.description}
+                {item.description &&
+                  (() => {
+                    try {
+                      const parsedDescription = JSON.parse(
+                        item.description.replace(/'/g, '"')
+                      );
+                      return parsedDescription.zh;
+                    } catch (error) {
+                      console.error("Failed to parse description:", error);
+                      return item.description;
+                    }
+                  })()}
               </p>
             </div>
           </div>
