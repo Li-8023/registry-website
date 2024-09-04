@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faDownload } from "@fortawesome/free-solid-svg-icons";
 import Footer from "@/app/components/Footer";
 import Markdown from "markdown-to-jsx";
+import markdownit from "markdown-it";
+
 
 async function fetchPackageDetail(packageName) {
   const res = await fetch(
@@ -54,6 +56,9 @@ const PackageDetailPage = ({ params }) => {
 
     fetchData();
   }, [params.packageName]);
+
+
+
 
   if (!packageDetail) {
     return (
@@ -162,6 +167,20 @@ const ReadmeSection = ({ readme, home }) => {
     setShowContent(content);
   };
 
+  //mark down
+  const md = markdownit({
+    html: true, // Enable HTML tags in source
+    linkify: true, // Autoconvert URL-like text to links
+    typographer: true, // Enable smartypants and other typographic improvements
+    // xhtmlOut: true,
+    // breaks: true,
+    // langPrefix: 'language-'
+    quotes: "“”‘’",
+    highlight: function (/*str, lang*/) {
+      return "";
+    },
+  });
+
   return (
     <div>
       <div className="btn-group mb-4" role="group">
@@ -192,13 +211,15 @@ const ReadmeSection = ({ readme, home }) => {
         </button>
       </div>
       {showContent === "readme" && (
-        <div className="card-text">
-          <Markdown>{readme}</Markdown>
-        </div>
+        <div
+          className="card-text"
+          dangerouslySetInnerHTML={{ __html: md.render(readme) }}
+        ></div>
       )}
       {showContent === "services" && <div className="card-text">未知</div>}
     </div>
   );
 };
 
+ 
 export default PackageDetailPage;

@@ -96,7 +96,7 @@ const CardItem = ({ item }) => {
           <div className="past-part mt-2">
             <center>
               <div className="button flex space-x-4">
-                <Link href={`/details/${item.name}`}>
+               
                   <button
                     className="preButton btn btn-outline-primary"
                     style={{
@@ -105,10 +105,13 @@ const CardItem = ({ item }) => {
                       fontSize: "0.8rem",
                       padding: "5px 10px",
                     }}
+                    onClick={() =>
+                      window.open(`/details/${item.name}`, "_blank")
+                    }
                   >
                     <FontAwesomeIcon icon={faBook} /> 查看详情
                   </button>
-                </Link>
+                
                 {item.zipball_url ? (
                   <a
                     href={item.zipball_url}
