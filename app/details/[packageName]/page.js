@@ -4,7 +4,6 @@ import Header from "../../components/Header";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faDownload } from "@fortawesome/free-solid-svg-icons";
 import Footer from "@/app/components/Footer";
-import Markdown from "markdown-to-jsx";
 import markdownit from "markdown-it";
 
 
@@ -169,9 +168,9 @@ const ReadmeSection = ({ readme, home }) => {
 
   //mark down
   const md = markdownit({
-    html: true, // Enable HTML tags in source
-    linkify: true, // Autoconvert URL-like text to links
-    typographer: true, // Enable smartypants and other typographic improvements
+    html: true,
+    linkify: true,
+    typographer: true, 
     // xhtmlOut: true,
     // breaks: true,
     // langPrefix: 'language-'

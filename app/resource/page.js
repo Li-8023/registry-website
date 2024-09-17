@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import CardItem from "../components/card/CardItem";
+import OldCardItem from "../components/card/CardItemOld";
 
 import ListSubheader from "@mui/material/ListSubheader";
 import List from "@mui/material/List";
@@ -39,9 +40,21 @@ const ResourcePage = () => {
   const [openSort, setOpenSort] = useState(false);
   const [openTypes, setOpenTypes] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [oldData, setOldData] = useState([]); // For old packages
 
-  const router = useRouter();
   const searchParams = useSearchParams();
+
+    const fetchOldPackages = async () => {
+      try {
+        const response = await fetch(
+          "https://registry.devsapp.cn/package/search"
+        );
+        const result = await response.json();
+        setOldData(result.Response); // Save old package data
+      } catch (error) {
+        console.error("Error fetching old packages:", error);
+      }
+    };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -80,6 +93,7 @@ const ResourcePage = () => {
 
     fetchCategories();
     fetchProviders();
+    fetchOldPackages();
     const search = searchParams.get("search");
     if (search) {
       setSearchQuery(search);
@@ -88,6 +102,7 @@ const ResourcePage = () => {
       fetchData();
     }
   }, [searchParams]);
+
 
   const fetchData = async (
     category = "",
@@ -118,27 +133,45 @@ const ResourcePage = () => {
   };
 
   useEffect(() => {
-    setSortedData(data);
-  }, [data]);
+    // Combine old and new packages, adjusting key differences
+    const combinedData = [
+      ...data.map((pkg) => ({
+        ...pkg,
+        source: "new", // Flag to indicate it's from the new API
+        packageName: pkg.name,
+      })),
+      ...oldData.map((pkg) => ({
+        ...pkg,
+        source: "old", // Flag to indicate it's from the old API
+        packageName: pkg.package,
+      })),
+    ];
+    setSortedData(combinedData);
+  }, [data, oldData]);
+
 
   const handleSort = (criteria) => {
     setLoading(true);
-    setSelectedSort(criteria);
-    const sorted = [...data].sort((a, b) => {
+    setSelectedSort(criteria); // Keep track of the selected sorting criteria
+    const sorted = [...sortedData].sort((a, b) => {
       if (criteria === "名称") {
-        return a.name.localeCompare(b.name);
+        return a.packageName.localeCompare(b.packageName); // Compare using packageName
       }
       if (criteria === "下载") {
         return b.download - a.download;
       }
       if (criteria === "日期") {
-        return new Date(b.latest_create) - new Date(a.latest_create);
+        return (
+          new Date(b.latest_create || b.version.created_at) -
+          new Date(a.latest_create || a.version.created_at)
+        );
       }
       return 0;
     });
     setSortedData(sorted);
     setLoading(false);
   };
+
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
@@ -170,18 +203,22 @@ const ResourcePage = () => {
     );
   };
 
-const handleTypeClick = (type) => {
-  const typeMap = {
-    "1": "1",
-    "2": "2",
-    "3": "3",
-  };
+  const handleTypeClick = (type) => {
+    const typeMap = {
+      1: "1",
+      2: "2",
+      3: "3",
+    };
 
-  const selectedTypeValue = typeMap[type] || type; // Using type directly if not found in typeMap
-  setSelectedType(selectedTypeValue);
-  fetchData(selectedCategory, selectedProvider, selectedTypeValue, searchQuery);
-  console.log("Selected Type:", selectedTypeValue); // Debugging: Check the selected type value
-};
+    const selectedTypeValue = typeMap[type] || type;
+    setSelectedType(selectedTypeValue);
+    fetchData(
+      selectedCategory,
+      selectedProvider,
+      selectedTypeValue,
+      searchQuery
+    );
+  };
 
   const toggleCategories = () => {
     setOpenCategories(!openCategories);
@@ -256,16 +293,6 @@ const handleTypeClick = (type) => {
             </ListItemButton>
             <Collapse in={openTypes} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                {/* <ListItemButton
-                  sx={{ pl: 4 }}
-                  onClick={() => handleTypeClick("None")}
-                >
-                  <Checkbox
-                    checked={selectedType === ""}
-                    onChange={() => handleTypeClick("None")}
-                  />
-                  <ListItemText primary={"全部"} />
-                </ListItemButton> */}
                 {[
                   { type: "1", label: "组件" },
                   { type: "2", label: "插件" },
@@ -383,8 +410,6 @@ const handleTypeClick = (type) => {
                 ))}
               </List>
             </Collapse>
-
-            
           </Box>
 
           {/* Right Section  */}
@@ -396,9 +421,13 @@ const handleTypeClick = (type) => {
                 gap: "30px",
               }}
             >
-              {sortedData.map((item, index) => (
-                <CardItem key={index} item={item} />
-              ))}
+              {sortedData.map((item, index) =>
+                item.source === "new" ? (
+                  <CardItem key={index} item={item} />
+                ) : (
+                  <OldCardItem key={index} item={item} />
+                )
+              )}
             </div>
           </div>
         </div>
@@ -410,103 +439,3 @@ const handleTypeClick = (type) => {
 };
 
 export default ResourcePage;
-
-
-
-
-
-{
-  /* <div className="sorting-section bg-white p-4 rounded shadow">
-              <h4 className="mb-4">分类</h4>
-              <div className="btn-group-vertical w-full">
-                <button
-                  className={`btn btn-outline-primary mb-2 ${
-                    selectedCategory === "" ? "bg-blue-500 text-red" : ""
-                  }`}
-                  onClick={() => handleCategoryClick("None")}
-                >
-                  无
-                </button>
-                {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    className={`btn btn-outline-primary mb-2 ${
-                      selectedCategory === category.name
-                        ? "bg-blue-500 text-red"
-                        : ""
-                    }`}
-                    onClick={() => handleCategoryClick(category.name)}
-                  >
-                    {category.name}
-                  </button>
-                ))}
-              </div>
-            </div> */
-}
-
-{
-  /* <div className="sorting-section bg-white p-4 rounded shadow mt-4">
-              <h4 className="mb-4">云厂商</h4>
-              <div className="btn-group-vertical w-full">
-                <button
-                  className={`btn btn-outline-primary mb-2 ${
-                    selectedProvider === "" ? "bg-blue-500 text-red" : ""
-                  }`}
-                  onClick={() => handleProviderClick("None")}
-                >
-                  无
-                </button>
-                {providers.map((provider) => (
-                  <button
-                    key={provider.id}
-                    className={`btn btn-outline-primary mb-2 ${
-                      selectedProvider === provider.name
-                        ? "bg-blue-500 text-red"
-                        : ""
-                    }`}
-                    onClick={() => handleProviderClick(provider.name)}
-                  >
-                    {provider.name}
-                  </button>
-                ))}
-              </div>
-            </div> */
-}
-
-{
-  /* Sorting Section */
-}
-
-{
-  /* <div className="sorting-section bg-white p-4 rounded shadow">
-              <h4 className="mb-4">排序</h4>
-              <div className="btn-group-vertical w-full">
-                <button
-                  className="btn btn-outline-primary mb-2"
-                  onClick={() => handleSort("name")}
-                >
-                  按名称排序
-                </button>
-                <button
-                  className="btn btn-outline-primary mb-2"
-                  onClick={() => handleSort("download")}
-                >
-                  按下载量排序
-                </button>
-                <button
-                  className="btn btn-outline-primary mb-2"
-                  onClick={() => handleSort("date")}
-                >
-                  按发布时间排序
-                </button>
-                <button
-                  className={`btn btn-outline-primary mb-2 ${
-                    selectedProvider === "" ? "bg-blue-500 text-red" : ""
-                  }`}
-                  onClick={() => handleProviderClick("None")}
-                >
-                  取消选择
-                </button>
-              </div>
-            </div> */
-}

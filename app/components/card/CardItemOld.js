@@ -15,7 +15,7 @@ import {
   faDownload,
 } from "@fortawesome/free-solid-svg-icons";
 
-export default function CardItem({ item }) {
+export default function OldCardItem({ item }) {
   const splitMaxLength = (str, length) => {
     if (typeof str !== "string") {
       return "";
@@ -65,7 +65,8 @@ export default function CardItem({ item }) {
       <CardHeader
         title={
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <Link href={`/details/${item.name}`} passHref>
+            {/* Link for item.package */}
+            <Link href={`/oldDetails/${item.package}`} passHref>
               <Typography
                 variant="body2"
                 sx={{
@@ -78,7 +79,7 @@ export default function CardItem({ item }) {
                   },
                 }}
               >
-                {splitMaxLength(item.name, 23)}
+                {splitMaxLength(item.package, 23)}
               </Typography>
             </Link>
 
@@ -115,7 +116,7 @@ export default function CardItem({ item }) {
             {/* Added marginTop to create a gap */}
             <FontAwesomeIcon icon={faCalendar} style={{ marginRight: "5px" }} />
             <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
-              {formatDate(item.latest_create)}
+              {formatDate(item.version.created_at)}
             </Typography>
           </div>
         }
@@ -168,7 +169,7 @@ export default function CardItem({ item }) {
                 marginRight: "10px",
               }}
               onClick={() =>
-                window.open(`/details/${item.package}`, "_blank")
+                window.open(`/oldDetails/${item.package}`, "_blank")
               }
             >
               <FontAwesomeIcon icon={faBook} /> 查看详情
@@ -176,6 +177,7 @@ export default function CardItem({ item }) {
 
             <button
               onClick={() => {
+                console.log(item.zipball_url);
                 window.open(item.zipball_url, "_blank");
               }}
               className="download btn btn-outline-secondary"
@@ -192,6 +194,7 @@ export default function CardItem({ item }) {
     </Card>
   );
 }
+
 // import React from "react";
 // import Link from "next/link";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -203,7 +206,7 @@ export default function CardItem({ item }) {
 //   faDesktop,
 // } from "@fortawesome/free-solid-svg-icons";
 
-// const CardItem = ({ item }) => {
+// const OldCardItem = ({ item }) => {
 //   const splitMaxLength = (str, length) => {
 //     if (typeof str !== "string") {
 //       return "";
@@ -237,38 +240,56 @@ export default function CardItem({ item }) {
 //           width: "100%",
 //           maxWidth: "350px",
 //           margin: "0 auto",
+//           position: "relative", // Ensure relative positioning for the ribbon
 //         }}
 //       >
+//         {/* Smaller Ribbon for "仅维护" */}
+//         <div
+//           className="ribbon"
+//           style={{
+//             position: "absolute",
+//             top: "10px",
+//             right: "-15px",
+//             width: "90px", // Smaller width
+//             height: "25px", // Smaller height
+//             backgroundColor: "#6676fa",
+//             color: "white",
+//             transform: "rotate(45deg)",
+//             textAlign: "center",
+//             lineHeight: "25px", // Match height
+//             fontSize: "0.7rem", // Slightly smaller font size
+//           }}
+//         >
+//           仅维护
+//         </div>
+
 //         <div className="main-content p-3">
-//           <h5 className="flex justify-between items-center text-sm">
-//             <Link href={`/details/${item.name}`}>
-//               {splitMaxLength(item.name, 30)}
+//           <h5 className="flex items-center text-sm">
+//             <Link href={`/details/${item.package}`}>
+//               {splitMaxLength(item.package, 20)}
 //             </Link>
-//             <span className="flex items-center text-orange-500 text-sm">
-//               <FontAwesomeIcon icon={faFire} className="mr-1" />
-//               {item.download}
+//             <span
+//               className="flex items-center text-orange-500 text-sm"
+//               style={{ marginLeft: "30px" }}
+//             >
+//               <FontAwesomeIcon
+//                 icon={faFire}
+//                 className="mr-1"
+//                 style={{ marginRight: "5px" }}
+//               />
+//               <span>{item.download}</span>
 //             </span>
 //           </h5>
 //           <div className="last-part mt-2">
 //             <div className="right" style={{ width: "100%" }}>
 //               <p className="text text-sm" style={{ width: "100%" }}>
-//                 {item.latest_create &&
+//                 {item.version.created_at && (
 //                   <>
 //                     <FontAwesomeIcon icon={faCalendar} />{" "}
-//                     {formatDate(item.latest_create)}
+//                     {formatDate(item.version.created_at)}
 //                   </>
-//                }
-//                 {item.latest_create && (
-//                   <>&nbsp;&nbsp;&nbsp;</>
 //                 )}
-//                 {/* {item.latest_create && item.version && (
-//                   <>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</>
-//                 )}
-//                 {item.version && (
-//                   <>
-//                     <FontAwesomeIcon icon={faDesktop} /> V{item.version}
-//                   </>
-//                 )} */}
+//                 {item.version.created_at && <>&nbsp;&nbsp;&nbsp;</>}
 //               </p>
 //               <p
 //                 className="text-flow-ellipsis-multiple mt-2 text-xs"
@@ -300,7 +321,9 @@ export default function CardItem({ item }) {
 //                     fontSize: "0.8rem",
 //                     padding: "5px 10px",
 //                   }}
-//                   onClick={() => window.open(`/details/${item.name}`, "_blank")}
+//                   onClick={() =>
+//                     window.open(`/oldDetails/${item.package}`, "_blank")
+//                   }
 //                 >
 //                   <FontAwesomeIcon icon={faBook} /> 查看详情
 //                 </button>
@@ -320,7 +343,7 @@ export default function CardItem({ item }) {
 //                   </a>
 //                 ) : (
 //                   <button
-//                     onClick={() => downloadPlugin(item.name)}
+//                     onClick={() => downloadPlugin(item.package)}
 //                     className="download btn btn-outline-secondary"
 //                     style={{
 //                       fontSize: "0.8rem",
@@ -339,4 +362,4 @@ export default function CardItem({ item }) {
 //   );
 // };
 
-// export default CardItem;
+// export default OldCardItem;
