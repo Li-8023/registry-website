@@ -44,7 +44,7 @@ export default function CardItem({ item }) {
       }}
     >
       {/* Ribbon */}
-      <div
+      {/* <div
         style={{
           position: "absolute",
           top: "10px",
@@ -60,7 +60,7 @@ export default function CardItem({ item }) {
         }}
       >
         仅维护
-      </div>
+      </div> */}
 
       <CardHeader
         title={
@@ -168,7 +168,7 @@ export default function CardItem({ item }) {
                 marginRight: "10px",
               }}
               onClick={() =>
-                window.open(`/details/${item.package}`, "_blank")
+                window.open(`/details/${item.name}`, "_blank")
               }
             >
               <FontAwesomeIcon icon={faBook} /> 查看详情
