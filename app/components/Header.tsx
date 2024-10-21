@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,9 +7,9 @@ import { faSearch, faTimes } from "@fortawesome/free-solid-svg-icons";
 import "../responsive.css";
 import "../style.css";
 
-const Header = () => {
-  const [isSticky, setIsSticky] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
+const Header: React.FC = () => {
+  const [isSticky, setIsSticky] = useState<boolean>(false);
+  const [showSearch, setShowSearch] = useState<boolean>(false);
   const router = useRouter();
   
   const toggleSearch = () => {
@@ -40,9 +40,9 @@ const Header = () => {
     }
   }, [showSearch]);
 
-  const handleSearchSubmit = (event) => {
+  const handleSearchSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const keyword = event.currentTarget.elements.keyword.value;
+    const keyword = (event.currentTarget.elements.namedItem("keyword") as HTMLInputElement).value;
     router.push(`/resource?search=${keyword}`);
   };
 

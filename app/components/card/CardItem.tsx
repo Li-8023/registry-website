@@ -15,20 +15,27 @@ import {
   faDownload,
 } from "@fortawesome/free-solid-svg-icons";
 
-export default function CardItem({ item }) {
-  const splitMaxLength = (str, length) => {
-    if (typeof str !== "string") {
-      return "";
-    }
+interface CardItemProps {
+  item: {
+    name: string,
+    download: number,
+    latest_create: string,
+    description?: string,
+    zipball_url?: string,
+  };
+}
+
+export default function CardItem({ item }: CardItemProps) {
+  const splitMaxLength = (str: string, length: number) => {
     return str.length > length ? str.substring(0, length) + "..." : str;
   };
 
-  const downloadPlugin = (name) => {
-    console.log(`Downloading plugin: ${name}`);
-  };
-
-  const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    };
     return new Date(dateString).toLocaleDateString("zh-CN", options);
   };
 
@@ -43,25 +50,6 @@ export default function CardItem({ item }) {
         borderRadius: "15px",
       }}
     >
-      {/* Ribbon */}
-      {/* <div
-        style={{
-          position: "absolute",
-          top: "10px",
-          right: "-20px",
-          backgroundColor: "#6676fa",
-          color: "white",
-          width: "90px",
-          height: "25px",
-          transform: "rotate(45deg)",
-          textAlign: "center",
-          lineHeight: "25px",
-          fontSize: "0.8rem",
-        }}
-      >
-        仅维护
-      </div> */}
-
       <CardHeader
         title={
           <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -111,8 +99,6 @@ export default function CardItem({ item }) {
           <div
             style={{ display: "flex", alignItems: "center", marginTop: "8px" }}
           >
-            {" "}
-            {/* Added marginTop to create a gap */}
             <FontAwesomeIcon icon={faCalendar} style={{ marginRight: "5px" }} />
             <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
               {formatDate(item.latest_create)}
@@ -167,16 +153,14 @@ export default function CardItem({ item }) {
                 padding: "5px 10px",
                 marginRight: "10px",
               }}
-              onClick={() =>
-                window.open(`/details/${item.name}`, "_blank")
-              }
+              onClick={() => window.open(`/details/${item.name}`, "_blank")}
             >
               <FontAwesomeIcon icon={faBook} /> 查看详情
             </button>
 
             <button
               onClick={() => {
-                window.open(item.zipball_url, "_blank");
+                window.open(item.zipball_url || "", "_blank");
               }}
               className="download btn btn-outline-secondary"
               style={{

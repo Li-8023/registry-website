@@ -21,40 +21,61 @@ import Box from "@mui/material/Box";
 import CategoryIcon from '@mui/icons-material/Category';
 import CloudCircleIcon from '@mui/icons-material/CloudCircle';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import LoadingPopup from '../components/LoadingPopup'
+import LoadingPopup from '../components/LoadingPopup';
 
+type Package = {
+  name?: string;
+  package?: string;
+  download?: number;
+  latest_create?: string;
+  version?: { created_at: string };
+  source?: string;
+  packageName?: string;
+  description?: string;
+  zipball_url?: string;
+};
 
-const ResourcePage = () => {
-  const [data, setData] = useState([]);
-  const [sortedData, setSortedData] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [providers, setProviders] = useState([]);
-  const [searchType, setSearchType] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedProvider, setSelectedProvider] = useState("");
-  const [selectedSort, setSelectedSort] = useState(null);
-  const [selectedType, setSelectedType] = useState("");
-  const [openCategories, setOpenCategories] = useState(false);
-  const [openProviders, setOpenProviders] = useState(false);
-  const [openSort, setOpenSort] = useState(false);
-  const [openTypes, setOpenTypes] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [oldData, setOldData] = useState([]); // For old packages
+type Category = {
+  id: string;
+  name: string;
+};
+
+type Provider = {
+  id: string;
+  name: string;
+};
+
+const ResourcePage: React.FC = () => {
+  const [data, setData] = useState<Package[]>([]);
+  const [sortedData, setSortedData] = useState<Package[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [searchType, setSearchType] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedProvider, setSelectedProvider] = useState<string>("");
+  const [selectedSort, setSelectedSort] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string>("");
+  const [openCategories, setOpenCategories] = useState<boolean>(false);
+  const [openProviders, setOpenProviders] = useState<boolean>(false);
+  const [openSort, setOpenSort] = useState<boolean>(false);
+  const [openTypes, setOpenTypes] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [oldData, setOldData] = useState<Package[]>([]);
 
   const searchParams = useSearchParams();
 
-    const fetchOldPackages = async () => {
-      try {
-        const response = await fetch(
-          "https://registry.devsapp.cn/package/search"
-        );
-        const result = await response.json();
-        setOldData(result.Response); // Save old package data
-      } catch (error) {
-        console.error("Error fetching old packages:", error);
-      }
-    };
+  const fetchOldPackages = async () => {
+    try {
+      const response = await fetch(
+        "https://registry.devsapp.cn/package/search"
+      );
+      const result = await response.json();
+      setOldData(result.Response);
+    } catch (error) {
+      console.error("Error fetching old packages:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -103,27 +124,26 @@ const ResourcePage = () => {
     }
   }, [searchParams]);
 
-
   const fetchData = async (
-    category = "",
-    provider = "",
-    type = null,
-    search = ""
+    category: string = "",
+    provider: string = "",
+    type: string | null = null,
+    search: string = ""
   ) => {
     setLoading(true);
     const url = new URL(
       "https://server-serverlgistry-v-awljqvnszb.cn-hangzhou.fcapp.run/v3/packages/releases"
     );
-    const params = { lang: "zh", type, category, provider, search };
+    const params: { [key: string]: string | null } = { lang: "zh", type, category, provider, search };
 
     Object.keys(params).forEach((key) => {
       if (params[key]) {
-        url.searchParams.append(key, params[key]);
+        url.searchParams.append(key, params[key] as string);
       }
     });
 
     try {
-      const response = await fetch(url, { headers: { lang: "zh" } });
+      const response = await fetch(url.toString(), { headers: { lang: "zh" } });
       const result = await response.json();
       setData(result.body);
     } catch (error) {
@@ -132,38 +152,37 @@ const ResourcePage = () => {
     setLoading(false);
   };
 
+
   useEffect(() => {
-    // Combine old and new packages, adjusting key differences
     const combinedData = [
       ...data.map((pkg) => ({
         ...pkg,
-        source: "new", // Flag to indicate it's from the new API
+        source: "new",
         packageName: pkg.name,
       })),
       ...oldData.map((pkg) => ({
         ...pkg,
-        source: "old", // Flag to indicate it's from the old API
+        source: "old",
         packageName: pkg.package,
       })),
     ];
     setSortedData(combinedData);
   }, [data, oldData]);
 
-
-  const handleSort = (criteria) => {
+  const handleSort = (criteria: string) => {
     setLoading(true);
-    setSelectedSort(criteria); // Keep track of the selected sorting criteria
+    setSelectedSort(criteria);
     const sorted = [...sortedData].sort((a, b) => {
       if (criteria === "名称") {
-        return a.packageName.localeCompare(b.packageName); // Compare using packageName
+        return (a.packageName || "").localeCompare(b.packageName || "");
       }
       if (criteria === "下载") {
-        return b.download - a.download;
+        return (b.download || 0) - (a.download || 0);
       }
       if (criteria === "日期") {
         return (
-          new Date(b.latest_create || b.version.created_at) -
-          new Date(a.latest_create || a.version.created_at)
+          new Date(b.latest_create || b.version?.created_at || 0).getTime() -
+          new Date(a.latest_create || a.version?.created_at || 0).getTime()
         );
       }
       return 0;
@@ -172,18 +191,12 @@ const ResourcePage = () => {
     setLoading(false);
   };
 
-
-  const handleSearch = (event) => {
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
-    fetchData(
-      selectedCategory,
-      selectedProvider,
-      searchType,
-      event.target.value
-    );
+    fetchData(selectedCategory, selectedProvider, searchType, event.target.value);
   };
 
-  const handleCategoryClick = (category) => {
+  const handleCategoryClick = (category: string) => {
     setSelectedCategory(category === "None" ? "" : category);
     fetchData(
       category === "None" ? "" : category,
@@ -193,7 +206,7 @@ const ResourcePage = () => {
     );
   };
 
-  const handleProviderClick = (provider) => {
+  const handleProviderClick = (provider: string) => {
     setSelectedProvider(provider === "None" ? "" : provider);
     fetchData(
       selectedCategory,
@@ -203,11 +216,11 @@ const ResourcePage = () => {
     );
   };
 
-  const handleTypeClick = (type) => {
-    const typeMap = {
-      1: "1",
-      2: "2",
-      3: "3",
+  const handleTypeClick = (type: string) => {
+    const typeMap: { [key: string]: string } = {
+      "1": "1",
+      "2": "2",
+      "3": "3",
     };
 
     const selectedTypeValue = typeMap[type] || type;
@@ -241,7 +254,6 @@ const ResourcePage = () => {
       <Header />
       {loading && <LoadingPopup />}
 
-      {/* Banner start */}
       <section className="breadcrumb-area">
         <div className="container">
           <div className="content">
@@ -261,12 +273,9 @@ const ResourcePage = () => {
           </div>
         </div>
       </section>
-      {/* Banner end */}
 
-      {/* Main Content Section */}
       <section className="main-content-section">
         <div className="container mx-auto flex flex-wrap py-12">
-          {/* Left Section */}
           <Box
             sx={{
               width: "100%",
@@ -283,7 +292,6 @@ const ResourcePage = () => {
               筛选
             </ListSubheader>
 
-            {/* Types */}
             <ListItemButton onClick={toggleTypes}>
               <ListItemIcon>
                 <ExtensionIcon />
@@ -313,7 +321,6 @@ const ResourcePage = () => {
               </List>
             </Collapse>
 
-            {/* Categories */}
             <ListItemButton onClick={toggleCategories}>
               <ListItemIcon>
                 <CategoryIcon />
@@ -349,7 +356,6 @@ const ResourcePage = () => {
               </List>
             </Collapse>
 
-            {/* Sort */}
             <ListItemButton onClick={toggleSort}>
               <ListItemIcon>
                 <FilterListIcon />
@@ -375,7 +381,6 @@ const ResourcePage = () => {
               </List>
             </Collapse>
 
-            {/* Providers */}
             <ListItemButton onClick={toggleProviders}>
               <ListItemIcon>
                 <CloudCircleIcon />
@@ -412,7 +417,6 @@ const ResourcePage = () => {
             </Collapse>
           </Box>
 
-          {/* Right Section  */}
           <div className="w-full md:w-7/12 lg:w-9/12">
             <div
               className="grid"
@@ -423,9 +427,27 @@ const ResourcePage = () => {
             >
               {sortedData.map((item, index) =>
                 item.source === "new" ? (
-                  <CardItem key={index} item={item} />
+                  <CardItem
+                    key={index}
+                    item={{
+                      name: item.name || "Unknown Name",
+                      download: item.download || 0,
+                      latest_create: item.latest_create || "",
+                      description: item.description,
+                      zipball_url: item.zipball_url,
+                    }}
+                  />
                 ) : (
-                  <OldCardItem key={index} item={item} />
+                  <OldCardItem
+                    key={index}
+                    item={{
+                      package: item.package || "Unknown Package",
+                      download: item.download || 0,
+                      version: item.version || { created_at: "" },
+                      description: item.description,
+                      zipball_url: item.zipball_url,
+                    }}
+                  />
                 )
               )}
             </div>

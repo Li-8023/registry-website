@@ -5,10 +5,29 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import CardItem from "../components/card/CardItem";
 
-const ApplicationPage = () => {
-  const [data, setData] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [providers, setProviders] = useState([]);
+interface Category {
+  id: string;
+  name: string;
+}
+
+interface Provider {
+  id: string;
+  name: string;
+}
+
+interface Package {
+  name: string;
+  download: number;
+  latest_create: string;
+  description?: string;
+  zipball_url?: string;
+}
+
+const ApplicationPage: React.FC = () => {
+  const [data, setData] = useState<Package[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [sortedData, setSortedData] = useState<Package[]>([]);
 
   useEffect(() => {
     // Fetch categories and providers
@@ -68,13 +87,11 @@ const ApplicationPage = () => {
     fetchData();
   }, []);
 
-  const [sortedData, setSortedData] = useState(data);
-
   useEffect(() => {
     setSortedData(data);
   }, [data]);
 
-  const handleSort = (criteria) => {
+  const handleSort = (criteria: string) => {
     const sorted = [...data].sort((a, b) => {
       if (criteria === "name") {
         return a.name.localeCompare(b.name);
@@ -83,7 +100,7 @@ const ApplicationPage = () => {
         return b.download - a.download;
       }
       if (criteria === "date") {
-        return new Date(b.latest_create) - new Date(a.latest_create);
+        return new Date(b.latest_create).getTime() - new Date(a.latest_create).getTime();
       }
       return 0;
     });
@@ -98,7 +115,7 @@ const ApplicationPage = () => {
       <section className="breadcrumb-area">
         <div className="container">
           <div className="content">
-            <h2 className="breadd wow fadeInUp">应用 </h2>
+            <h2 className="breadd wow fadeInUp">应用</h2>
             <ul className="breadcrumb-list wow fadeInUp">
               <li>
                 <a href="/">首页 /</a>

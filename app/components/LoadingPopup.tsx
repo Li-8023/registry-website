@@ -1,4 +1,6 @@
-const LoadingPopup = () => (
+import React from "react";
+
+const LoadingPopup: React.FC = () => (
   <div
     style={{
       position: "fixed",

@@ -1,6 +1,7 @@
+import React from "react";
 import Link from "next/link";
 
-const Footer = () => {
+const Footer: React.FC = () => {
   return (
     <>
       <footer className="footer-area two py-12">
@@ -102,6 +103,7 @@ const Footer = () => {
                   <img
                     src="https://serverless-article-picture.oss-cn-hangzhou.aliyuncs.com/1648814797378_20220401120637498673.png"
                     className="w-24"
+                    alt="钉钉交流群"
                   />
                 </div>
               </div>
@@ -116,6 +118,7 @@ const Footer = () => {
                   <img
                     src="https://serverless-article-picture.oss-cn-hangzhou.aliyuncs.com/1648814758343_20220401120558862369.png"
                     className="w-24"
+                    alt="微信公众号"
                   />
                 </div>
               </div>

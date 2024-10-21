@@ -1,3 +1,4 @@
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendarAlt,
@@ -5,8 +6,7 @@ import {
   faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 
-
-const BlogSection = () => {
+const BlogSection: React.FC = () => {
   return (
     <section className="blog-two py-12">
       <div className="container mx-auto">
@@ -71,10 +71,6 @@ const BlogSection = () => {
           </div>
           <div className="lg:w-5/12 flex flex-col justify-between mt-8 lg:mt-0 space-y-4">
             <div className="right-box">
-              {/* <a
-                className="flex items-start"
-                href="https://github.com/Serverless-Devs/Serverless-Devs/blob/master/docs/zh/readme.md"
-              > */}
               <img
                 style={{ width: "100px" }}
                 src="https://serverless-article-picture.oss-cn-hangzhou.aliyuncs.com/1648814061808_20220401115422201406.png"
@@ -98,11 +94,8 @@ const BlogSection = () => {
                   </a>
                 </div>
               </div>
-              {/* </a> */}
             </div>
             <div className="right-box">
-              {/* <Link href="https://github.com/Serverless-Devs/Serverless-Devs/blob/master/spec/readme.md"> */}
-              {/* <a className="flex items-start"> */}
               <img
                 style={{ width: "100px" }}
                 src="https://serverless-article-picture.oss-cn-hangzhou.aliyuncs.com/1648814119666_20220401115519778987.png"
@@ -126,33 +119,31 @@ const BlogSection = () => {
                   </a>
                 </div>
               </div>
-              {/* </a> */}
             </div>
             <div className="right-box">
-              {/* <Link href="https://github.com/Serverless-Devs/Serverless-Devs/discussions/407"> */}
-              {/* <a className="flex items-start"> */}
-                <img
-                  style={{ width: "100px" }}
-                  src="https://serverless-article-picture.oss-cn-hangzhou.aliyuncs.com/1648814406516_20220401120006833466.png"
-                  alt=""
-                  className="rounded-lg"
-                />
-                <div className="right-part ml-4">
-                  <div className="date text-gray-600 text-sm">2022.01</div>
-                  <h6 className="text-lg font-semibold mt-2">
-            
-                    <a href="https://github.com/Serverless-Devs/Serverless-Devs/discussions/407">快速开发Serverless Package</a>
-          
-                  </h6>
-                  <div className="last-part mt-2">
-                    <a className="text-blue-500 flex items-center" href="https://github.com/Serverless-Devs/Serverless-Devs/discussions/407">
-                      阅读更多
-                      <FontAwesomeIcon icon={faArrowRight} className="ml-1" />
-                    </a>
-            
-                  </div>
+              <img
+                style={{ width: "100px" }}
+                src="https://serverless-article-picture.oss-cn-hangzhou.aliyuncs.com/1648814406516_20220401120006833466.png"
+                alt=""
+                className="rounded-lg"
+              />
+              <div className="right-part ml-4">
+                <div className="date text-gray-600 text-sm">2022.01</div>
+                <h6 className="text-lg font-semibold mt-2">
+                  <a href="https://github.com/Serverless-Devs/Serverless-Devs/discussions/407">
+                    快速开发Serverless Package
+                  </a>
+                </h6>
+                <div className="last-part mt-2">
+                  <a
+                    className="text-blue-500 flex items-center"
+                    href="https://github.com/Serverless-Devs/Serverless-Devs/discussions/407"
+                  >
+                    阅读更多
+                    <FontAwesomeIcon icon={faArrowRight} className="ml-1" />
+                  </a>
                 </div>
-              {/* </a> */}
+              </div>
             </div>
           </div>
         </div>

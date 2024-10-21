@@ -1,21 +1,39 @@
-"use client"
+"use client";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faDownload,
-  faCalendar,
-} from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faCalendar } from "@fortawesome/free-solid-svg-icons";
 import Header from "../../components/Header";
 import markdownit from "markdown-it";
 import Footer from "@/app/components/Footer";
+import React from "react";
 
+interface PackageDetailProps {
+  params: {
+    packageName: string;
+  };
+}
 
-const PackageDetail = ({ params }) => {
+interface PackageDetails {
+  name: string;
+  created_at: string;
+  tag_name: string;
+  version: {
+    zipball_url: string;
+  };
+  description: string;
+  readme: string;
+  home: string;
+  provider?: string[];
+  tags?: string[];
+}
+
+const PackageDetail: React.FC<PackageDetailProps> = ({ params }) => {
   const { packageName } = params;
 
-  const [packageDetails, setPackageDetails] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [packageDetails, setPackageDetails] = useState<PackageDetails | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [notFound, setNotFound] = useState<boolean>(false);  
 
   useEffect(() => {
     if (packageName) {
@@ -23,13 +41,19 @@ const PackageDetail = ({ params }) => {
     }
   }, [packageName]);
 
-  const fetchPackageDetails = async (packageName) => {
+  const fetchPackageDetails = async (packageName: string) => {
     try {
       const response = await fetch(
         `https://api.devsapp.cn/v3/packages/${packageName}/release/latest`
       );
       const result = await response.json();
-      setPackageDetails(result.body);
+
+      if (result.body === "未找到指定资源") {
+        setNotFound(true);  // Set the notFound flag
+      } else {
+        setPackageDetails(result.body);
+      }
+
       setLoading(false);
     } catch (error) {
       console.error("Error fetching package details:", error);
@@ -38,12 +62,7 @@ const PackageDetail = ({ params }) => {
     }
   };
 
-  function formatDate(dateString) {
-    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
-    return new Date(dateString).toLocaleDateString("zh-CN", options);
-  }
-
-  const formatDateWithHyphen = (dateString) => {
+  const formatDateWithHyphen = (dateString: string) => {
     const options = { year: "numeric", month: "2-digit", day: "2-digit" };
     return new Date(dateString)
       .toLocaleDateString("zh-CN", {
@@ -63,13 +82,13 @@ const PackageDetail = ({ params }) => {
     return <div>{error}</div>;
   }
 
-    if (packageDetails === "未找到指定资源") {
-      return (
-        <div className="container mx-auto p-4 text-center">
-          <h1 className="text-3xl font-bold mb-4">未找到指定资源</h1>
-        </div>
-      );
-    }
+  if (notFound) {  
+    return (
+      <div className="container mx-auto p-4 text-center">
+        <h1 className="text-3xl font-bold mb-4">未找到指定资源</h1>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -79,12 +98,12 @@ const PackageDetail = ({ params }) => {
           <div className="content">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="breadd wow fadeInUp">{packageDetails.name}</h2>
+                <h2 className="breadd wow fadeInUp">{packageDetails?.name}</h2>
                 <div className="flex items-center space-x-2 text-black">
                   <FontAwesomeIcon icon={faCalendar} />
                   <span>
-                    {formatDateWithHyphen(packageDetails.created_at)} / V
-                    {packageDetails.tag_name}
+                    {formatDateWithHyphen(packageDetails?.created_at || "")} / V
+                    {packageDetails?.tag_name}
                   </span>
                 </div>
               </div>
@@ -92,7 +111,7 @@ const PackageDetail = ({ params }) => {
                 <button
                   className="btn btn-outline-primary text-white border border-primary"
                   onClick={() =>
-                    window.open(packageDetails.version.zipball_url, "_blank")
+                    window.open(packageDetails?.version.zipball_url, "_blank")
                   }
                 >
                   <FontAwesomeIcon icon={faDownload} /> 下载
@@ -113,12 +132,12 @@ const PackageDetail = ({ params }) => {
         <div className="flex">
           <div className="w-7/12 p-4">
             <div className="card mb-4 p-4">
-              <p className="card-text">{packageDetails.description}</p>
+              <p className="card-text">{packageDetails?.description}</p>
             </div>
             <div className="card p-4">
               <ReadmeSection
-                readme={packageDetails.readme}
-                home={packageDetails.home}
+                readme={packageDetails?.readme || ""}
+                home={packageDetails?.home || ""}
               />
             </div>
           </div>
@@ -126,29 +145,23 @@ const PackageDetail = ({ params }) => {
             <div className="card mb-4 p-4">
               <p className="card-text">
                 厂商支持：
-                {packageDetails.provider &&
-                Array.isArray(packageDetails.provider)
+                {packageDetails?.provider && Array.isArray(packageDetails?.provider)
                   ? packageDetails.provider.join(", ")
-                  : "未知"}{" "}
-                {/* If provider is not available, display "未知" (unknown) */}
+                  : "未知"}
               </p>
             </div>
 
             <div className="card mb-4 p-4">
-              <p className="card-text">更新时间: {packageDetails.created_at}</p>
-              <p className="card-text">更新版本: {packageDetails.tag_name}</p>
+              <p className="card-text">更新时间: {packageDetails?.created_at}</p>
+              <p className="card-text">更新版本: {packageDetails?.tag_name}</p>
             </div>
 
-            {/* <div className="card p-4">
-              <h2 className="card-title text-xl font-bold mb-2">标签</h2>
-              <p className="card-text">{packageDetails.tags.join(", ")}</p>
-            </div> */}
             <div className="card p-4">
               <h2 className="card-title text-xl font-bold mb-2">标签</h2>
               <p className="card-text">
-                {packageDetails.tags && Array.isArray(packageDetails.tags)
+                {packageDetails?.tags && Array.isArray(packageDetails?.tags)
                   ? packageDetails.tags.join(", ")
-                  : "无标签"}{" "}
+                  : "无标签"}
               </p>
             </div>
           </div>
@@ -160,10 +173,15 @@ const PackageDetail = ({ params }) => {
   );
 };
 
-const ReadmeSection = ({ readme, home }) => {
-  const [showContent, setShowContent] = useState("readme");
+interface ReadmeSectionProps {
+  readme: string;
+  home: string;
+}
 
-  const handleButtonClick = (content) => {
+const ReadmeSection: React.FC<ReadmeSectionProps> = ({ readme, home }) => {
+  const [showContent, setShowContent] = useState<string>("readme");
+
+  const handleButtonClick = (content: string) => {
     setShowContent(content);
   };
 
@@ -173,14 +191,14 @@ const ReadmeSection = ({ readme, home }) => {
     linkify: true,
     typographer: true,
     quotes: "“”‘’",
-    highlight: function (/*str, lang*/) {
+    highlight: function () {
       return "";
     },
   });
 
   // Check if readme exists and is a string
   const formattedReadme =
-    readme && typeof readme === "string" ? md.render(readme) : "暂无帮助文档"; // Show "暂无帮助文档" (No help document) if not available
+    readme && typeof readme === "string" ? md.render(readme) : "暂无帮助文档";
 
   return (
     <div>
@@ -221,6 +239,5 @@ const ReadmeSection = ({ readme, home }) => {
     </div>
   );
 };
-
 
 export default PackageDetail;
