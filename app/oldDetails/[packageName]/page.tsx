@@ -142,8 +142,10 @@ const PackageDetail: React.FC<PackageDetailProps> = ({ params }) => {
               <div>
                 <button
                   className="btn btn-outline-primary text-white border border-primary"
-                  onClick={() =>
-                    window.open(packageDetails?.zipball_url, "_blank")
+                  onClick={() => 
+                    releases && releases.length > 0 
+                    ? window.open(releases[0].zipball_url, "_blank")
+                    : window.open(packageDetails?.zipball_url, "_blank")
                   }
                 >
                   <FontAwesomeIcon icon={faDownload} /> 下载
