@@ -15,16 +15,27 @@ interface PackageDetailProps {
 
 interface PackageDetails {
   name: string;
-  created_at: string;
+  create: string;
   tag_name: string;
-  version: {
-    zipball_url: string;
-  };
+  version: string;
   description: string;
+  zipball_url: string;
   readme: string;
   home: string;
   provider?: string[];
   tags?: string[];
+  userInformation?: {
+    avatar_url: string;
+    html_url: string;
+    user: string;
+  };
+}
+
+interface Release {
+  tag_name: string;
+  name: string;
+  created_at: string;
+  zipball_url: string;
 }
 
 const PackageDetail: React.FC<PackageDetailProps> = ({ params }) => {
@@ -33,25 +44,33 @@ const PackageDetail: React.FC<PackageDetailProps> = ({ params }) => {
   const [packageDetails, setPackageDetails] = useState<PackageDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [notFound, setNotFound] = useState<boolean>(false);  
+  const [notFound, setNotFound] = useState<boolean>(false);
+  const [releases, setReleases] = useState<Release[] | null>(null);
 
   useEffect(() => {
     if (packageName) {
       fetchPackageDetails(packageName);
+      fetchPackageReleases(packageName);
     }
   }, [packageName]);
 
   const fetchPackageDetails = async (packageName: string) => {
+    const base_url = "https://registry.devsapp.cn";
     try {
-      const response = await fetch(
-        `https://api.devsapp.cn/v3/packages/${packageName}/release/latest`
-      );
+      const response = await fetch(`${base_url}/package/content`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `name=${packageName}`, 
+      });
       const result = await response.json();
+      console.log("Fetched package details:", result);
 
-      if (result.body === "未找到指定资源") {
-        setNotFound(true);  // Set the notFound flag
+      if (result.Error === "GetParameterFailed" || !result.Response) {
+        setNotFound(true); 
       } else {
-        setPackageDetails(result.body);
+        setPackageDetails(result.Response);
       }
 
       setLoading(false);
@@ -59,6 +78,20 @@ const PackageDetail: React.FC<PackageDetailProps> = ({ params }) => {
       console.error("Error fetching package details:", error);
       setError("Unable to fetch package details.");
       setLoading(false);
+    }
+  };
+
+  const fetchPackageReleases = async (packageName: string) => {
+    const base_url = "https://registry.devsapp.cn";
+    try {
+      const response = await fetch(`${base_url}/simple/${packageName}/releases`);
+      const result = await response.json();
+
+      if (result.Response) {
+        setReleases(result.Response);
+      }
+    } catch (error) {
+      console.error("Error fetching package releases:", error);
     }
   };
 
@@ -98,12 +131,11 @@ const PackageDetail: React.FC<PackageDetailProps> = ({ params }) => {
           <div className="content">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="breadd wow fadeInUp">{packageDetails?.name}</h2>
+                <h2 className="breadd wow fadeInUp text-gray-500">{packageDetails?.name}</h2>
                 <div className="flex items-center space-x-2 text-black">
                   <FontAwesomeIcon icon={faCalendar} />
-                  <span>
-                    {formatDateWithHyphen(packageDetails?.created_at || "")} / V
-                    {packageDetails?.tag_name}
+                  <span >
+                    {`${formatDateWithHyphen(packageDetails?.create || "")} / V ${packageDetails?.version || ""}`}
                   </span>
                 </div>
               </div>
@@ -111,7 +143,7 @@ const PackageDetail: React.FC<PackageDetailProps> = ({ params }) => {
                 <button
                   className="btn btn-outline-primary text-white border border-primary"
                   onClick={() =>
-                    window.open(packageDetails?.version.zipball_url, "_blank")
+                    window.open(packageDetails?.zipball_url, "_blank")
                   }
                 >
                   <FontAwesomeIcon icon={faDownload} /> 下载
@@ -120,9 +152,9 @@ const PackageDetail: React.FC<PackageDetailProps> = ({ params }) => {
             </div>
             <ul className="breadcrumb-list wow fadeInUp">
               <li>
-                <a href="/">首页 /</a>
+                <a href="/" className="text-gray-500">首页 /</a>
               </li>
-              <li>应用详情</li>
+              <li className="text-gray-500">应用详情</li>
             </ul>
           </div>
         </div>
@@ -132,7 +164,7 @@ const PackageDetail: React.FC<PackageDetailProps> = ({ params }) => {
         <div className="flex">
           <div className="w-7/12 p-4">
             <div className="card mb-4 p-4">
-              <p className="card-text">{packageDetails?.description}</p>
+              <p className="card-text text-gray-500">{packageDetails?.description}</p>
             </div>
             <div className="card p-4">
               <ReadmeSection
@@ -142,8 +174,25 @@ const PackageDetail: React.FC<PackageDetailProps> = ({ params }) => {
             </div>
           </div>
           <div className="w-5/12 p-4">
+            {packageDetails?.userInformation && (
+              <div className="card mb-4 p-4 text-center">
+                <img
+                  src={packageDetails.userInformation.avatar_url}
+                  alt="User Avatar"
+                  className="w-24 h-24 rounded-full mx-auto mb-2"
+                />
+                <a
+                  href={packageDetails.userInformation.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary"
+                >
+                  {packageDetails.userInformation.user}
+                </a>
+              </div>
+            )}
             <div className="card mb-4 p-4">
-              <p className="card-text">
+              <p className="card-text text-gray-500">
                 厂商支持：
                 {packageDetails?.provider && Array.isArray(packageDetails?.provider)
                   ? packageDetails.provider.join(", ")
@@ -152,13 +201,35 @@ const PackageDetail: React.FC<PackageDetailProps> = ({ params }) => {
             </div>
 
             <div className="card mb-4 p-4">
-              <p className="card-text">更新时间: {packageDetails?.created_at}</p>
-              <p className="card-text">更新版本: {packageDetails?.tag_name}</p>
+              <p className="card-text text-gray-500">更新时间: {formatDateWithHyphen(packageDetails?.create || "")}</p>
+              <p className="card-text text-gray-500">更新版本: {packageDetails?.version}</p>
+            </div>
+
+            <div className="card mb-4 p-4">
+              <h2 className="card-title text-xl font-bold mb-2 text-gray-500">历史版本</h2>
+              {releases && releases.length > 0 ? (
+                <ul className="text-gray-500">
+                  {releases.map((release) => (
+                    <li key={release.tag_name}>
+                      <a
+                        href={release.zipball_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-500"
+                      >
+                        {`V${release.tag_name} (${formatDateWithHyphen(release.created_at)})`}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500">无历史版本</p>
+              )}
             </div>
 
             <div className="card p-4">
-              <h2 className="card-title text-xl font-bold mb-2">标签</h2>
-              <p className="card-text">
+              <h2 className="card-title text-xl font-bold mb-2 text-gray-500">标签</h2>
+              <p className="card-text text-gray-500">
                 {packageDetails?.tags && Array.isArray(packageDetails?.tags)
                   ? packageDetails.tags.join(", ")
                   : "无标签"}
@@ -196,9 +267,10 @@ const ReadmeSection: React.FC<ReadmeSectionProps> = ({ readme, home }) => {
     },
   });
 
-  // Check if readme exists and is a string
   const formattedReadme =
-    readme && typeof readme === "string" ? md.render(readme) : "暂无帮助文档";
+    readme && typeof readme === "string" && readme.trim() !== ""
+      ? md.render(readme)
+      : "无";
 
   return (
     <div>
@@ -231,11 +303,11 @@ const ReadmeSection: React.FC<ReadmeSectionProps> = ({ readme, home }) => {
       </div>
       {showContent === "readme" && (
         <div
-          className="card-text"
+          className="card-text text-gray-500"
           dangerouslySetInnerHTML={{ __html: formattedReadme }}
         ></div>
       )}
-      {showContent === "services" && <div className="card-text">未知</div>}
+      {showContent === "services" && <div className="card-text text-gray-500">未知</div>}
     </div>
   );
 };

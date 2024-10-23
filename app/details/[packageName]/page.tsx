@@ -159,7 +159,7 @@ const PackageDetailPage: React.FC<PackageDetailProps> = ({ params }) => {
             </div>
             <div className="card p-4">
               <ReadmeSection
-                readme={packageDetail?.readme || ""}
+                readme={packageDetail?.readme || "无"}
                 home={packageDetail?.home || ""}
               />
             </div>
