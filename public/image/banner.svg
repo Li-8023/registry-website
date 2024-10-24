@@ -1,0 +1,49 @@
+
+<svg width="1440.00012px" height="545px" viewBox="0 0 1440.00012 545" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <filter x="-0.5%" y="-0.9%" width="101.0%" height="102.6%" filterUnits="objectBoundingBox" id="filter-p0uwqzfdjs-1">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+        <linearGradient x1="0%" y1="42.8379401%" x2="100%" y2="57.1620599%" id="linearGradient-p0uwqzfdjs-2">
+            <stop stop-color="#1A79FF" offset="0%"></stop>
+            <stop stop-color="#9968FF" offset="100%"></stop>
+        </linearGradient>
+        <rect id="path-p0uwqzfdjs-3" x="0" y="0" width="1440.00012" height="545"></rect>
+        <filter x="-20.2%" y="-25.2%" width="140.4%" height="150.4%" filterUnits="objectBoundingBox" id="filter-p0uwqzfdjs-5">
+            <feGaussianBlur stdDeviation="50" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="-14.7%" y="-18.3%" width="129.4%" height="136.7%" filterUnits="objectBoundingBox" id="filter-p0uwqzfdjs-6">
+            <feGaussianBlur stdDeviation="50" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="-20.2%" y="-25.2%" width="140.4%" height="150.4%" filterUnits="objectBoundingBox" id="filter-p0uwqzfdjs-7">
+            <feGaussianBlur stdDeviation="50" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="-27.3%" y="-34.0%" width="154.5%" height="168.1%" filterUnits="objectBoundingBox" id="filter-p0uwqzfdjs-8">
+            <feGaussianBlur stdDeviation="50" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+        <filter x="-14.0%" y="-17.5%" width="128.1%" height="135.0%" filterUnits="objectBoundingBox" id="filter-p0uwqzfdjs-9">
+            <feGaussianBlur stdDeviation="50" in="SourceGraphic"></feGaussianBlur>
+        </filter>
+    </defs>
+    <g id="20241022" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="BG" filter="url(#filter-p0uwqzfdjs-1)">
+            <rect fill-rule="nonzero" x="0" y="0" width="1440" height="545"></rect>
+            <mask id="mask-p0uwqzfdjs-4" fill="white">
+                <use xlink:href="#path-p0uwqzfdjs-3"></use>
+            </mask>
+            <use id="矩形" fill="url(#linearGradient-p0uwqzfdjs-2)" fill-rule="nonzero" xlink:href="#path-p0uwqzfdjs-3"></use>
+            <ellipse id="椭圆形" fill="#3400FA" fill-rule="nonzero" opacity="0.449999988" filter="url(#filter-p0uwqzfdjs-5)" mask="url(#mask-p0uwqzfdjs-4)" cx="12.0000305" cy="225.213463" rx="371.000031" ry="297.345612"></ellipse>
+            <ellipse id="椭圆形" fill="#3400FA" fill-rule="nonzero" opacity="0.159999996" filter="url(#filter-p0uwqzfdjs-6)" mask="url(#mask-p0uwqzfdjs-4)" cx="237.000061" cy="147.470642" rx="510.000061" ry="408.750031"></ellipse>
+            <ellipse id="椭圆形" fill="#6218FF" fill-rule="nonzero" opacity="0.105143227" filter="url(#filter-p0uwqzfdjs-7)" mask="url(#mask-p0uwqzfdjs-4)" cx="1203.00003" cy="107.396881" rx="371.000031" ry="297.345612"></ellipse>
+            <ellipse id="椭圆形" fill="#7F0CEB" fill-rule="nonzero" opacity="0.0781715065" filter="url(#filter-p0uwqzfdjs-8)" mask="url(#mask-p0uwqzfdjs-4)" cx="682.000031" cy="625.147232" rx="275.000031" ry="220.404434"></ellipse>
+            <ellipse id="椭圆形" fill="#FFFFFF" fill-rule="nonzero" opacity="0.319731206" filter="url(#filter-p0uwqzfdjs-9)" mask="url(#mask-p0uwqzfdjs-4)" cx="167.500061" cy="765.805145" rx="534.500061" ry="428.386017"></ellipse>
+            <ellipse id="椭圆形" opacity="0.319731206" fill-rule="nonzero" mask="url(#mask-p0uwqzfdjs-4)" cx="64.3823853" cy="-202.975555" rx="534.500061" ry="428.386017"></ellipse>
+        </g>
+    </g>
+</svg>

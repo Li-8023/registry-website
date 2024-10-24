@@ -1,29 +1,46 @@
 import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCalendar,
   faFire,
-  faBook,
   faDownload,
+  faBook,
 } from "@fortawesome/free-solid-svg-icons";
 
 interface CardItemProps {
   item: {
-    name: string,
-    download: number,
-    latest_create: string,
-    description?: string,
-    zipball_url?: string,
+    name: string;
+    download: number;
+    latest_create: string;
+    description?: string;
+    zipball_url?: string;
+    type?:string;
   };
 }
+
+const StyledCard = styled(Card)(({ theme }) => ({
+  maxWidth: 285,
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
+  boxShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
+  borderRadius: "15px",
+  backgroundColor: "#121316",
+  border: "1px solid #4a4c56",
+  transition: "background-color 0.3s, border-color 0.3s",
+  '&:hover': {
+    backgroundColor: "#1d1e23",
+    borderColor: "#3a2580",
+  },
+  '&.MuiCard-root:active': {
+    borderColor: "#4a4c56",
+  },
+}));
 
 export default function CardItem({ item }: CardItemProps) {
   const splitMaxLength = (str: string, length: number) => {
@@ -39,89 +56,101 @@ export default function CardItem({ item }: CardItemProps) {
     return new Date(dateString).toLocaleDateString("zh-CN", options);
   };
 
-  return (
-    <Card
-      sx={{
-        maxWidth: 345,
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.3)",
-        borderRadius: "15px",
-      }}
-    >
-      <CardHeader
-        title={
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <Link href={`/details/${item.name}`} passHref>
-              <Typography
-                variant="body2"
-                sx={{
-                  fontSize: "1.0rem",
-                  color: "#4a6ff7",
-                  textDecoration: "none",
-                  transition: "color 0.3s",
-                  "&:hover": {
-                    color: "#3a56d3",
-                  },
-                }}
-              >
-                {splitMaxLength(item.name, 23)}
-              </Typography>
-            </Link>
+  const getIconSrc = () => {
+    switch (item.type) {
+      case "Component":
+        return "/image/card_component.svg";
+      case "Plugin":
+        return "/image/card_plugin.svg";
+      case "Application":
+      default:
+        return "/image/card_application.svg";
+    }
+  };
 
-            {/* Fire icon and download number */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                marginRight: "30px",
-              }}
-            >
-              <FontAwesomeIcon
-                icon={faFire}
-                style={{
-                  marginRight: "5px",
-                  fontSize: "0.9rem",
-                  color: "orange",
-                }}
-              />
-              <Typography
-                variant="body2"
-                sx={{ color: "orange", fontSize: "0.9rem" }}
-              >
-                {item.download}
-              </Typography>
-            </div>
-          </div>
-        }
-        subheader={
-          <div
-            style={{ display: "flex", alignItems: "center", marginTop: "8px" }}
-          >
-            <FontAwesomeIcon icon={faCalendar} style={{ marginRight: "5px" }} />
-            <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
-              {formatDate(item.latest_create)}
-            </Typography>
-          </div>
-        }
-      />
-      <CardContent
-        sx={{
-          flex: "1 0 auto",
+  return (
+    <StyledCard>
+      {/* Icon Box */}
+      <div
+        style={{
+          backgroundColor: "inherit",
+          padding: "20px",
+          borderTopLeftRadius: "15px",
+          borderTopRightRadius: "15px",
+          textAlign: "left",
           display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          height: "100px",
+          alignItems: "flex-start", 
+          flexDirection: "column", 
         }}
       >
+        {/* Icon container */}
+        <div
+          style={{
+            width: "45px",
+            height: "45px",
+            borderRadius: "10px",
+            border: "1px solid #FFFFFF",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor:"#26272c",
+            borderColor:"#5e6068",
+          }}
+        >
+          <img
+            src={getIconSrc()}
+            alt={`${item.type} Icon`}
+            style={{ width: "30px", height: "30px" }}
+          />
+        </div>
+
+        {/* Download and creation date information */}
+        <div style={{ marginTop: "10px", display: "flex", alignItems: "center" }}> {/* Reduced marginTop to reduce space */}
+          <FontAwesomeIcon icon={faFire} style={{ color: "#4a37f0", marginRight: "5px" }} />
+          <Typography
+            variant="body2"
+            sx={{
+              fontSize: "0.9rem",
+              background: "linear-gradient(90deg, #312feb, #6a42f5)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              marginRight: "10px",
+            }}
+          >
+            {item.download}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ fontSize: "0.9rem", color: "#828596", marginRight: "10px" }}
+          >
+            |
+          </Typography>
+          <Typography variant="body2" sx={{ fontSize: "0.9rem", color: "#828596" }}>
+            {formatDate(item.latest_create)}
+          </Typography>
+        </div>
+        <div>
+           <Typography
+          variant="h6"
+          sx={{
+            fontSize: "1.2rem",
+            color: "#FFFFFF",
+            fontWeight: "bold",
+            marginTop: "10px", 
+          }}
+        >
+          {splitMaxLength(item.name, 23)}
+        </Typography>
+
         <Typography
           variant="body2"
           sx={{
-            color: "text.secondary",
+            color: "#828596",
+            fontSize: "0.7rem",
+            marginTop: "10px",
             display: "-webkit-box",
             WebkitBoxOrient: "vertical",
-            WebkitLineClamp: 2,
+            WebkitLineClamp: 3, 
             overflow: "hidden",
             textOverflow: "ellipsis",
           }}
@@ -129,198 +158,69 @@ export default function CardItem({ item }: CardItemProps) {
           {item.description &&
             (() => {
               try {
-                const parsedDescription = JSON.parse(
-                  item.description.replace(/'/g, '"')
-                );
+                const parsedDescription = JSON.parse(item.description.replace(/'/g, '"'));
                 return parsedDescription.zh;
               } catch (error) {
                 console.error("Failed to parse description:", error);
-                return item.description;
+                return item.description; 
               }
             })()}
         </Typography>
+        </div>
+      </div>
+
+      <CardContent
+        sx={{
+          flex: "1 0 auto",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          textAlign: "left",
+        }}
+      >
       </CardContent>
 
+      {/* Action buttons for download and details */}
       <CardActions disableSpacing>
-        <center style={{ width: "100%" }}>
+        <div style={{ width: "100%", textAlign: "left", marginTop:"-15px" }}>
           <div className="button flex space-x-4">
-            <button
-              className="preButton btn btn-outline-primary"
-              style={{
-                backgroundColor: "#6676fa",
-                color: "white",
-                fontSize: "0.8rem",
-                padding: "5px 10px",
-                marginRight: "10px",
-              }}
-              onClick={() => window.open(`/details/${item.name}`, "_blank")}
-            >
-              <FontAwesomeIcon icon={faBook} /> 查看详情
-            </button>
-
+            {/* Download button */}
             <button
               onClick={() => {
-                window.open(item.zipball_url || "", "_blank");
+                window.open(item.zipball_url || "", "_blank"); 
               }}
               className="download btn btn-outline-secondary"
               style={{
+                backgroundColor: "#2e3037",
+                color: "#c1c2c8",
                 fontSize: "0.8rem",
-                padding: "5px 10px",
+                padding: "5px 20px",
+                borderRadius: "20px",
+                height: "40px",
+                border:"none",
               }}
             >
-              <FontAwesomeIcon icon={faDownload} /> 下载组件
+              下载组件
+            </button>
+            {/* Details button */}
+            <button
+              className="preButton btn btn-outline-primary"
+              style={{
+                backgroundColor: "#1d1e23",
+                color: "#c1c2c8",
+                fontSize: "0.8rem",
+                padding: "5px 20px",
+                marginRight: "10px",
+                borderRadius: "20px",
+                borderColor: "#696b74",
+              }}
+              onClick={() => window.open(`/details/${item.name}`, "_blank")}
+            >
+              查看详情
             </button>
           </div>
-        </center>
+        </div>
       </CardActions>
-    </Card>
+    </StyledCard>
   );
 }
-// import React from "react";
-// import Link from "next/link";
-// import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-// import {
-//   faBook,
-//   faDownload,
-//   faFire,
-//   faCalendar,
-//   faDesktop,
-// } from "@fortawesome/free-solid-svg-icons";
-
-// const CardItem = ({ item }) => {
-//   const splitMaxLength = (str, length) => {
-//     if (typeof str !== "string") {
-//       return "";
-//     }
-//     return str.length > length ? str.substring(0, length) + "..." : str;
-//   };
-
-//   const downloadPlugin = (name) => {
-//     console.log(`Downloading plugin: ${name}`);
-//   };
-
-//   const formatDate = (dateString) => {
-//     const options = { year: "numeric", month: "2-digit", day: "2-digit" };
-//     return new Date(dateString).toLocaleDateString("zh-CN", options);
-//   };
-
-//   return (
-//     <div
-//       className="wow fadeInUp mb-4"
-//       data-wow-delay={`${item.delayTime}s`}
-//       style={{
-//         visibility: "visible",
-//         animationDelay: "0.2s",
-//         animationName: "fadeInUp",
-//       }}
-//     >
-//       <div
-//         className="themes-box shadow-lg rounded-xl overflow-hidden"
-//         style={{
-//           overflow: "hidden",
-//           width: "100%",
-//           maxWidth: "350px",
-//           margin: "0 auto",
-//         }}
-//       >
-//         <div className="main-content p-3">
-//           <h5 className="flex justify-between items-center text-sm">
-//             <Link href={`/details/${item.name}`}>
-//               {splitMaxLength(item.name, 30)}
-//             </Link>
-//             <span className="flex items-center text-orange-500 text-sm">
-//               <FontAwesomeIcon icon={faFire} className="mr-1" />
-//               {item.download}
-//             </span>
-//           </h5>
-//           <div className="last-part mt-2">
-//             <div className="right" style={{ width: "100%" }}>
-//               <p className="text text-sm" style={{ width: "100%" }}>
-//                 {item.latest_create &&
-//                   <>
-//                     <FontAwesomeIcon icon={faCalendar} />{" "}
-//                     {formatDate(item.latest_create)}
-//                   </>
-//                }
-//                 {item.latest_create && (
-//                   <>&nbsp;&nbsp;&nbsp;</>
-//                 )}
-//                 {/* {item.latest_create && item.version && (
-//                   <>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;</>
-//                 )}
-//                 {item.version && (
-//                   <>
-//                     <FontAwesomeIcon icon={faDesktop} /> V{item.version}
-//                   </>
-//                 )} */}
-//               </p>
-//               <p
-//                 className="text-flow-ellipsis-multiple mt-2 text-xs"
-//                 style={{ height: "50px", color: "darkgray" }}
-//               >
-//                 {item.description &&
-//                   (() => {
-//                     try {
-//                       const parsedDescription = JSON.parse(
-//                         item.description.replace(/'/g, '"')
-//                       );
-//                       return parsedDescription.zh;
-//                     } catch (error) {
-//                       console.error("Failed to parse description:", error);
-//                       return item.description;
-//                     }
-//                   })()}
-//               </p>
-//             </div>
-//           </div>
-//           <div className="past-part mt-2">
-//             <center>
-//               <div className="button flex space-x-4">
-//                 <button
-//                   className="preButton btn btn-outline-primary"
-//                   style={{
-//                     backgroundColor: "#6676fa",
-//                     color: "white",
-//                     fontSize: "0.8rem",
-//                     padding: "5px 10px",
-//                   }}
-//                   onClick={() => window.open(`/details/${item.name}`, "_blank")}
-//                 >
-//                   <FontAwesomeIcon icon={faBook} /> 查看详情
-//                 </button>
-
-//                 {item.zipball_url ? (
-//                   <a
-//                     href={item.zipball_url}
-//                     target="_blank"
-//                     rel="noopener noreferrer"
-//                     className="download btn btn-outline-secondary"
-//                     style={{
-//                       fontSize: "0.8rem",
-//                       padding: "5px 10px",
-//                     }}
-//                   >
-//                     <FontAwesomeIcon icon={faDownload} /> 下载组件
-//                   </a>
-//                 ) : (
-//                   <button
-//                     onClick={() => downloadPlugin(item.name)}
-//                     className="download btn btn-outline-secondary"
-//                     style={{
-//                       fontSize: "0.8rem",
-//                       padding: "5px 10px",
-//                     }}
-//                   >
-//                     <FontAwesomeIcon icon={faDownload} /> 下载组件
-//                   </button>
-//                 )}
-//               </div>
-//             </center>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CardItem;

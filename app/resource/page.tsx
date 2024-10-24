@@ -25,6 +25,7 @@ import LoadingPopup from '../components/LoadingPopup';
 
 type Package = {
   name?: string;
+  type?: string;
   package?: string;
   download?: number;
   latest_create?: string;
@@ -250,210 +251,313 @@ const ResourcePage: React.FC = () => {
   };
 
   return (
-    <div>
+    <div style={{ backgroundColor: "#121316", minHeight: "100vh" }}>
       <Header />
       {loading && <LoadingPopup />}
 
-      <section className="breadcrumb-area">
+      <section
+        className="breadcrumb-area"
+        style={{
+          backgroundImage: "url('/image/banner.svg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          padding: "100px 0",
+          textAlign: "center",
+        }}
+      >
         <div className="container">
-          <div className="content">
-            <input
-              type="text"
-              placeholder="搜索..."
-              value={searchQuery}
-              onChange={handleSearch}
-              className="search-input w-full p-2 border rounded"
-            />
-            <ul className="breadcrumb-list wow fadeInUp mt-4">
-              <li>
-                <a href="/">首页 /</a>
-              </li>
-              <li>搜索</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section className="main-content-section">
-        <div className="container mx-auto flex flex-wrap py-12">
-          <Box
-            sx={{
-              width: "100%",
-              maxWidth: 250,
-              bgcolor: "background.paper",
-              overflowY: "auto",
-              maxHeight: 600,
-              marginRight: 5,
-            }}
-            component="nav"
-            aria-labelledby="nested-list-subheader"
-          >
-            <ListSubheader component="div" id="nested-list-subheader">
-              筛选
-            </ListSubheader>
-
-            <ListItemButton onClick={toggleTypes}>
-              <ListItemIcon>
-                <ExtensionIcon />
-              </ListItemIcon>
-              <ListItemText primary="类别" />
-              {openTypes ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={openTypes} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                {[
-                  { type: "1", label: "组件" },
-                  { type: "2", label: "插件" },
-                  { type: "3", label: "应用" },
-                ].map((option) => (
-                  <ListItemButton
-                    sx={{ pl: 4 }}
-                    key={option.type}
-                    onClick={() => handleTypeClick(option.type)}
-                  >
-                    <Checkbox
-                      checked={selectedType === option.type}
-                      onChange={() => handleTypeClick(option.type)}
-                    />
-                    <ListItemText primary={option.label} />
-                  </ListItemButton>
-                ))}
-              </List>
-            </Collapse>
-
-            <ListItemButton onClick={toggleCategories}>
-              <ListItemIcon>
-                <CategoryIcon />
-              </ListItemIcon>
-              <ListItemText primary="分类" />
-              {openCategories ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={openCategories} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItemButton
-                  sx={{ pl: 4 }}
-                  onClick={() => handleCategoryClick("None")}
-                >
-                  <Checkbox
-                    checked={selectedCategory === ""}
-                    onChange={() => handleCategoryClick("None")}
-                  />
-                  <ListItemText primary={"全部"} />
-                </ListItemButton>
-                {categories.map((category) => (
-                  <ListItemButton
-                    sx={{ pl: 4 }}
-                    key={category.id}
-                    onClick={() => handleCategoryClick(category.name)}
-                  >
-                    <Checkbox
-                      checked={selectedCategory === category.name}
-                      onChange={() => handleCategoryClick(category.name)}
-                    />
-                    <ListItemText primary={category.name} />
-                  </ListItemButton>
-                ))}
-              </List>
-            </Collapse>
-
-            <ListItemButton onClick={toggleSort}>
-              <ListItemIcon>
-                <FilterListIcon />
-              </ListItemIcon>
-              <ListItemText primary="排序" />
-              {openSort ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={openSort} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                {["名称", "下载", "日期"].map((criteria) => (
-                  <ListItemButton
-                    sx={{ pl: 4 }}
-                    key={criteria}
-                    onClick={() => handleSort(criteria)}
-                  >
-                    <Checkbox
-                      checked={selectedSort === criteria}
-                      onChange={() => handleSort(criteria)}
-                    />
-                    <ListItemText primary={`按${criteria}排序`} />
-                  </ListItemButton>
-                ))}
-              </List>
-            </Collapse>
-
-            <ListItemButton onClick={toggleProviders}>
-              <ListItemIcon>
-                <CloudCircleIcon />
-              </ListItemIcon>
-              <ListItemText primary="云厂商" />
-              {openProviders ? <ExpandLess /> : <ExpandMore />}
-            </ListItemButton>
-            <Collapse in={openProviders} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItemButton
-                  sx={{ pl: 4 }}
-                  onClick={() => handleProviderClick("None")}
-                >
-                  <Checkbox
-                    checked={selectedProvider === ""}
-                    onChange={() => handleProviderClick("None")}
-                  />
-                  <ListItemText primary={"全部"} />
-                </ListItemButton>
-                {providers.map((provider) => (
-                  <ListItemButton
-                    sx={{ pl: 4 }}
-                    key={provider.id}
-                    onClick={() => handleProviderClick(provider.name)}
-                  >
-                    <Checkbox
-                      checked={selectedProvider === provider.name}
-                      onChange={() => handleProviderClick(provider.name)}
-                    />
-                    <ListItemText primary={provider.name} />
-                  </ListItemButton>
-                ))}
-              </List>
-            </Collapse>
-          </Box>
-
-          <div className="w-full md:w-7/12 lg:w-9/12">
-            <div
-              className="grid"
+          <div className="content text-white">
+            {/* Centered Title */}
+            <h1
               style={{
-                gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                gap: "30px",
+                fontSize: "3.0rem",
+                fontWeight: "bold",
+                marginBottom: "30px",
+                color: "#FFFFFF",
               }}
             >
-              {sortedData.map((item, index) =>
-                item.source === "new" ? (
-                  <CardItem
-                    key={index}
-                    item={{
-                      name: item.name || "Unknown Name",
-                      download: item.download || 0,
-                      latest_create: item.latest_create || "",
-                      description: item.description,
-                      zipball_url: item.zipball_url,
-                    }}
-                  />
-                ) : (
-                  <OldCardItem
-                    key={index}
-                    item={{
-                      package: item.package || "Unknown Package",
-                      download: item.download || 0,
-                      version: item.version || { created_at: "" },
-                      description: item.description,
-                      zipball_url: item.zipball_url,
-                    }}
-                  />
-                )
-              )}
+              Serverless 包管理平台
+            </h1>
+            <p style={{ fontSize: "1.2rem", opacity: 0.7, color: "#FFFFFF", marginBottom: "30px", }}>
+              让你像使用手机一样玩转Serverless架构
+            </p>
+
+            {/* Search Input */}
+            <div className="search-container relative inline-block w-full max-w-md">
+              <input
+                type="text"
+                placeholder="搜索 Package ..."
+                value={searchQuery}
+                onChange={handleSearch}
+                className="w-full p-3 pl-4 pr-12 border border-white rounded-md bg-opacity-25 text-white placeholder-white"
+                style={{
+                  background: "rgba(255, 255, 255, 0.1)", 
+                  borderRadius: "20px", 
+                  height:"45px",
+                  borderColor: "#b4b6c0", 
+                  color: "#adb4f5", 
+                }}
+              />
+              <span className="absolute inset-y-0 right-4 flex items-center">
+                <img
+                  src="/image/search.svg"
+                  alt="Search Icon"
+                  className="w-5 h-5"
+                />
+              </span>
             </div>
           </div>
         </div>
       </section>
+
+      <section className="main-content-section" style={{ backgroundColor: "transparent" }}>
+  <div className="container mx-auto flex flex-wrap py-12">
+    <Box
+      sx={{
+        width: "100%",
+        maxWidth: 250,
+        bgcolor: "background.paper",
+        overflowY: "auto",
+        maxHeight: 600,
+        marginRight: 5,
+      }}
+      component="nav"
+      aria-labelledby="nested-list-subheader"
+    >
+      <ListSubheader component="div" id="nested-list-subheader">
+        筛选
+      </ListSubheader>
+
+      {/* Expandable sections */}
+      <ListItemButton onClick={toggleTypes}>
+        <ListItemIcon>
+          <ExtensionIcon />
+        </ListItemIcon>
+        <ListItemText primary="类别" />
+        {openTypes ? <ExpandLess /> : <ExpandMore />}
+      </ListItemButton>
+      <Collapse in={openTypes} timeout="auto" unmountOnExit sx={{ bgcolor: "#1c1d21" }}>
+        <List component="div" disablePadding>
+          {[
+            { type: "1", label: "组件" },
+            { type: "2", label: "插件" },
+            { type: "3", label: "应用" },
+          ].map((option) => (
+            <ListItemButton
+              sx={{ pl: 4 }}
+              key={option.type}
+              onClick={() => handleTypeClick(option.type)}
+            >
+              <Checkbox
+                checked={selectedType === option.type}
+                onChange={() => handleTypeClick(option.type)}
+              />
+              <ListItemText primary={option.label} />
+            </ListItemButton>
+          ))}
+        </List>
+      </Collapse>
+
+      {/* Repeat similar updates for Categories, Providers, and Sort sections */}
+      <ListItemButton onClick={toggleCategories}>
+        <ListItemIcon>
+          <CategoryIcon />
+        </ListItemIcon>
+        <ListItemText primary="分类" />
+        {openCategories ? <ExpandLess /> : <ExpandMore />}
+      </ListItemButton>
+      <Collapse in={openCategories} timeout="auto" unmountOnExit sx={{ bgcolor: "#1c1d21" }}>
+        <List component="div" disablePadding>
+          <ListItemButton
+            sx={{ pl: 4 }}
+            onClick={() => handleCategoryClick("None")}
+          >
+            <Checkbox
+              checked={selectedCategory === ""}
+              onChange={() => handleCategoryClick("None")}
+            />
+            <ListItemText primary={"全部"} />
+          </ListItemButton>
+          {categories.map((category) => (
+            <ListItemButton
+              sx={{ pl: 4 }}
+              key={category.id}
+              onClick={() => handleCategoryClick(category.name)}
+            >
+              <Checkbox
+                checked={selectedCategory === category.name}
+                onChange={() => handleCategoryClick(category.name)}
+              />
+              <ListItemText primary={category.name} />
+            </ListItemButton>
+          ))}
+        </List>
+      </Collapse>
+
+      {/* Update the same way for Sort and Providers */}
+    </Box>
+
+    <div className="w-full md:w-7/12 lg:w-9/12">
+      <div
+        className="grid"
+        style={{
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: "30px",
+        }}
+      >
+        {sortedData.map((item, index) =>
+          item.source === "new" ? (
+            <CardItem
+              key={index}
+              item={{
+                name: item.name || "Unknown Name",
+                type: item.type || "Unknown Type",
+                download: item.download || 0,
+                latest_create: item.latest_create || "",
+                description: item.description,
+                zipball_url: item.zipball_url,
+              }}
+            />
+          ) : (
+            <OldCardItem
+              key={index}
+              item={{
+                package: item.package || "Unknown Package",
+                download: item.download || 0,
+                version: item.version || { created_at: "" },
+                description: item.description,
+                zipball_url: item.zipball_url,
+              }}
+            />
+          )
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+<section className="main-content-section">
+  <div className="container mx-auto flex flex-wrap py-12">
+    <Box
+      sx={{
+        width: "100%",
+        maxWidth: 250,
+        bgcolor: "background.paper",
+        overflowY: "auto",
+        maxHeight: 600,
+        marginRight: 5,
+      }}
+      component="nav"
+      aria-labelledby="nested-list-subheader"
+    >
+      <ListSubheader component="div" id="nested-list-subheader">
+        筛选
+      </ListSubheader>
+
+      <ListItemButton onClick={toggleTypes}>
+        <ListItemIcon>
+          <ExtensionIcon />
+        </ListItemIcon>
+        <ListItemText primary="类别" />
+        {openTypes ? <ExpandLess /> : <ExpandMore />}
+      </ListItemButton>
+      <Collapse in={openTypes} timeout="auto" unmountOnExit sx={{ bgcolor: "#1c1d21" }}>
+        <List component="div" disablePadding>
+          {[
+            { type: "1", label: "组件" },
+            { type: "2", label: "插件" },
+            { type: "3", label: "应用" },
+          ].map((option) => (
+            <ListItemButton
+              sx={{ pl: 4 }}
+              key={option.type}
+              onClick={() => handleTypeClick(option.type)}
+            >
+              <Checkbox
+                checked={selectedType === option.type}
+                onChange={() => handleTypeClick(option.type)}
+              />
+              <ListItemText primary={option.label} />
+            </ListItemButton>
+          ))}
+        </List>
+      </Collapse>
+
+      <ListItemButton onClick={toggleCategories}>
+        <ListItemIcon>
+          <CategoryIcon />
+        </ListItemIcon>
+        <ListItemText primary="分类" />
+        {openCategories ? <ExpandLess /> : <ExpandMore />}
+      </ListItemButton>
+      <Collapse in={openCategories} timeout="auto" unmountOnExit sx={{ bgcolor: "#1c1d21" }}>
+        <List component="div" disablePadding>
+          <ListItemButton
+            sx={{ pl: 4 }}
+            onClick={() => handleCategoryClick("None")}
+          >
+            <Checkbox
+              checked={selectedCategory === ""}
+              onChange={() => handleCategoryClick("None")}
+            />
+            <ListItemText primary={"全部"} />
+          </ListItemButton>
+          {categories.map((category) => (
+            <ListItemButton
+              sx={{ pl: 4 }}
+              key={category.id}
+              onClick={() => handleCategoryClick(category.name)}
+            >
+              <Checkbox
+                checked={selectedCategory === category.name}
+                onChange={() => handleCategoryClick(category.name)}
+              />
+              <ListItemText primary={category.name} />
+            </ListItemButton>
+          ))}
+        </List>
+      </Collapse>
+
+    </Box>
+
+    <div className="w-full md:w-7/12 lg:w-9/12">
+      <div
+        className="grid"
+        style={{
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: "30px",
+        }}
+      >
+        {sortedData.map((item, index) =>
+          item.source === "new" ? (
+            <CardItem
+              key={index}
+              item={{
+                name: item.name || "Unknown Name",
+                type: item.type || "Unknown Type",
+                download: item.download || 0,
+                latest_create: item.latest_create || "",
+                description: item.description,
+                zipball_url: item.zipball_url,
+              }}
+            />
+          ) : (
+            <OldCardItem
+              key={index}
+              item={{
+                package: item.package || "Unknown Package",
+                download: item.download || 0,
+                version: item.version || { created_at: "" },
+                description: item.description,
+                zipball_url: item.zipball_url,
+              }}
+            />
+          )
+        )}
+      </div>
+    </div>
+  </div>
+</section>
+
 
       <Footer />
     </div>
